@@ -123,4 +123,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'thetvdb' => [
+        'api_key' => env('THETVDB_API_KEY', ''),
+        'pin' => env('THETVDB_API_PIN', ''),
+    ],
 ];

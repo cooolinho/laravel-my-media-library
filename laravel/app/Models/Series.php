@@ -2,11 +2,21 @@
 
 namespace App\Models;
 
+use App\Models\TheTvDB\SeriesData;
 use Database\Factories\SeriesFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property int $theTvDbId
+ * @property SeriesData $data
+ * @property Collection $episodes
+ */
 class Series extends Model
 {
     /** @use HasFactory<SeriesFactory> */
@@ -20,47 +30,18 @@ class Series extends Model
     const has_many_episodes = 'episodes';
     public $timestamps = false;
 
-    public int $id;
-    public string $name;
-    public int $theTvDbId;
-
     protected $fillable = [
         self::name,
         self::theTvDbId,
     ];
 
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    public function getTheTvDbId(): int
-    {
-        return $this->theTvDbId;
-    }
-
-    public function setTheTvDbId(int $theTvDbId): void
-    {
-        $this->theTvDbId = $theTvDbId;
-    }
-
     public function episodes(): HasMany
     {
         return $this->hasMany(Episode::class);
+    }
+
+    public function data(): HasOne
+    {
+        return $this->hasOne(SeriesData::class);
     }
 }

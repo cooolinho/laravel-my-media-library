@@ -19,13 +19,8 @@ return new class extends Migration
 
         Schema::create('series_data', function (Blueprint $table) {
             $table->id();
-            $table->string('aired');
-            $table->string('image');
-            $table->string('lastUpdated');
-            $table->string('name');
-            $table->string('overview');
-            $table->string('runtime');
-            $table->string('year');
+            $table->string('image')->nullable();
+            $table->foreignId('series_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

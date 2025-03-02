@@ -14,22 +14,16 @@ return new class extends Migration
         Schema::create('episodes', function (Blueprint $table) {
             $table->id();
             $table->integer('number');
-            $table->integer('season');
-            $table->boolean('owned');
+            $table->integer('seasonNumber');
+            $table->boolean('owned')->default(false);
             $table->integer('theTvDbId');
             $table->foreignId('series_id')->constrained()->onDelete('cascade');
         });
 
         Schema::create('episode_data', function (Blueprint $table) {
             $table->id();
-            $table->string('firstAired');
-            $table->string('image');
-            $table->string('lastAired');
-            $table->string('lastUpdated');
-            $table->string('name');
-            $table->string('nextAired');
-            $table->string('slug');
-            $table->string('year');
+            $table->json('translations')->nullable();
+            $table->foreignId('episode_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

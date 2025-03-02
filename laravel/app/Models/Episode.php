@@ -2,11 +2,24 @@
 
 namespace App\Models;
 
+use App\Models\TheTvDB\EpisodeData;
 use Database\Factories\EpisodeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property int $id
+ * @property int $number
+ * @property int $seasonNumber
+ * @property bool $owned
+ * @property int $theTvDbId
+ * @property int $series_id
+ * @property int $episode_data_id
+ * @property Series $series
+ * @property EpisodeData $data
+ */
 class Episode extends Model
 {
     /** @use HasFactory<EpisodeFactory> */
@@ -14,69 +27,29 @@ class Episode extends Model
 
     const id = 'id';
     const number = 'number';
-    const season = 'season';
+    const seasonNumber = 'seasonNumber';
     const owned = 'owned';
     const theTvDbId = 'theTvDbId';
 
     // relations
-    const belongs_to_series = 'series';
+    const belongs_to_series = 'series_id';
     public $timestamps = false;
 
-    public int $id;
-    public int $number;
-    public int $season;
-    public bool $owned;
-    public int $theTvDbId;
-
-    public Series $series;
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function getNumber(): int
-    {
-        return $this->number;
-    }
-
-    public function setNumber(int $number): void
-    {
-        $this->number = $number;
-    }
-
-    public function getSeason(): int
-    {
-        return $this->season;
-    }
-
-    public function setSeason(int $season): void
-    {
-        $this->season = $season;
-    }
-
-    public function isOwned(): bool
-    {
-        return $this->owned;
-    }
-
-    public function setOwned(bool $owned): void
-    {
-        $this->owned = $owned;
-    }
-
-    public function getTheTvDbId(): int
-    {
-        return $this->theTvDbId;
-    }
-
-    public function setTheTvDbId(int $theTvDbId): void
-    {
-        $this->theTvDbId = $theTvDbId;
-    }
+    protected $fillable = [
+        self::number,
+        self::seasonNumber,
+        self::owned,
+        self::theTvDbId,
+        self::belongs_to_series,
+    ];
 
     public function series(): BelongsTo
     {
         return $this->belongsTo(Series::class);
+    }
+
+    public function data(): HasOne
+    {
+        return $this->hasOne(EpisodeData::class);
     }
 }
