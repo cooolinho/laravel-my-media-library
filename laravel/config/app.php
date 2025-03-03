@@ -126,7 +126,7 @@ return [
     'thetvdb' => [
         'api_key' => env('THETVDB_API_KEY', ''),
         'pin' => env('THETVDB_API_PIN', ''),
-        'token_expiration' => env('THETVDB_API_TOKEN_EXPIRATION', 43200), // 1 Monat
+        'token_expiration' => env('THETVDB_API_TOKEN_EXPIRATION', 43200), // 1 Month
         'languages' => env('THETVDB_API_LANGUAGES', ['deu','eng']),
         'locale_language_mapping' => [
             'en' => 'eng',

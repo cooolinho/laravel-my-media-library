@@ -53,4 +53,12 @@ class Episode extends Model
     {
         return $this->hasOne(EpisodeData::class);
     }
+
+    public function getIdentifier(): string
+    {
+        $seasonNumber = str_pad((string)$this->seasonNumber, 2, '0', STR_PAD_LEFT);
+        $episodeNumber = str_pad((string)$this->number, 2, '0', STR_PAD_LEFT);
+
+        return sprintf('S%sE%s', $seasonNumber, $episodeNumber);
+    }
 }

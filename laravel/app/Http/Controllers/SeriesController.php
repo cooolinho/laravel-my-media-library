@@ -15,11 +15,12 @@ class SeriesController extends Controller
 
     public function index()
     {
-        $series = Series::query()->firstOrCreate([
-            Series::name => 'Breaking Bad',
-            Series::theTvDbId => 81189,
-        ]);
+        $series = Series::query()->where([
+            Series::theTvDbId => 273181,
+        ])->first();
 
+        $episodes = $this->theTVDBApiService->getSeriesEpisodes(273181);
+        dd($episodes);
         return view('series.index', [
             'series' => $series
         ]);

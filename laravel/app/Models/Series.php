@@ -46,4 +46,16 @@ class Series extends Model
     {
         return $this->hasOne(SeriesData::class);
     }
+
+    public function getEpisodesIdentifier(): array
+    {
+        $identifier = [];
+
+        /** @var Episode $episode */
+        foreach ($this->episodes as $episode) {
+            $identifier[$episode->getIdentifier()] = $episode->theTvDbId;
+        }
+
+        return $identifier;
+    }
 }

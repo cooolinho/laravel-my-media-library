@@ -145,13 +145,13 @@ class TheTVDBApiService
 
     /**
      * @note https://thetvdb.github.io/v4-api/#/Series/getSeriesEpisodes
-     * @param Series $series
+     * @param string $theTvDbId
      * @param string $seasonType
      * @return array
      */
-    public function getSeriesEpisodes(Series $series, string $seasonType = 'default'): array
+    public function getSeriesEpisodes(string $theTvDbId, string $seasonType = 'default'): array
     {
-        return $this->request(sprintf('series/%s/episodes/%s', $series->theTvDbId, $seasonType), [
+        return $this->request(sprintf('series/%s/episodes/%s', $theTvDbId, $seasonType), [
             'page' => 0,
         ]);
     }
@@ -170,14 +170,19 @@ class TheTVDBApiService
 
     /**
      * @param Series $series
+     * @param bool $ignoreSpecials
      * @return array<Episode>
      */
-    public function importSeriesEpisodes(Series $series): array
+    public function importSeriesEpisodes(Series $series, bool $ignoreSpecials = true): array
     {
-        $data = $this->getSeriesEpisodes($series)['data']['episodes'];
+        $data = $this->getSeriesEpisodes($series->theTvDbId)['data']['episodes'];
 
         $episodes = [];
         foreach ($data as $episode) {
+            if ($ignoreSpecials && $episode[Episode::seasonNumber] <= 0) {
+                continue;
+            }
+
             $episodes[] = Episode::query()->updateOrCreate([
                 Episode::belongs_to_series => $series->id,
                 Episode::theTvDbId => $episode['id'],
