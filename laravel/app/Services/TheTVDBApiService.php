@@ -198,4 +198,14 @@ class TheTVDBApiService
             EpisodeData::translations => $translations,
         ]));
     }
+
+    public function search($query, string $type = 'series', string $language = 'deu', int $limit = 10)
+    {
+        return $this->request('search', [
+            'query' => $query,
+            'type' => $type,
+            'language' => $language,
+            'limit' => $limit,
+        ]);
+    }
 }

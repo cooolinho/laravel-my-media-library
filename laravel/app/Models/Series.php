@@ -28,6 +28,8 @@ class Series extends Model
 
     // relations
     const has_many_episodes = 'episodes';
+    const has_one_data = 'data';
+
     public $timestamps = false;
 
     protected $fillable = [

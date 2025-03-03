@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\SeriesResource\Pages;
 use App\Filament\Resources\SeriesResource\RelationManagers;
 use App\Models\Series;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -24,9 +23,11 @@ class SeriesResource extends Resource
             ->schema([
                 TextInput::make(Series::name)
                     ->required()
+                    ->name(Series::name)
                     ->maxLength(255),
                 TextInput::make(Series::theTvDbId)
                     ->required()
+                    ->name(Series::theTvDbId)
                     ->columnSpanFull(),
             ]);
     }
