@@ -19,8 +19,6 @@ class SeriesController extends Controller
             Series::theTvDbId => 273181,
         ])->first();
 
-        $episodes = $this->theTVDBApiService->getSeriesEpisodes(273181);
-        dd($episodes);
         return view('series.index', [
             'series' => $series
         ]);
