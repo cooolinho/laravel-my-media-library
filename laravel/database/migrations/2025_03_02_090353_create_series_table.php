@@ -19,7 +19,7 @@ return new class extends Migration
 
         Schema::create('series_data', function (Blueprint $table) {
             $table->id();
-            $table->string('image')->nullable();
+            $table->json('translations')->nullable();
             $table->foreignId('series_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

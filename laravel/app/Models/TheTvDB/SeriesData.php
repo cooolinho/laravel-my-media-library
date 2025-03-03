@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  *
  * @property int $id
- * @property string $image
  * @property string $series_id
  * @property Series $series
  **/
@@ -25,7 +24,7 @@ class SeriesData extends Model
     const updated_at = self::UPDATED_AT;
 
     // the tv db properties
-    const image = 'image';
+    const translations = 'translations';
 
     // relations
     const series_id = 'series_id';
@@ -34,8 +33,12 @@ class SeriesData extends Model
     protected $table = self::TABLE;
 
     protected $fillable = [
-        self::image,
         self::series_id,
+        self::translations,
+    ];
+
+    protected $casts = [
+        self::translations => 'array',
     ];
 
     public function series(): BelongsTo

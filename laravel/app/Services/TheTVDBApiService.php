@@ -19,12 +19,19 @@ class TheTVDBApiService
     private int $tokenExpiration;
     private int $retries = 0;
     private int $maxRetries = 3;
+    private array $languages;
+    private array $translationsKeysIgnore = [
+        'language',
+        'isPrimary',
+        'aliases',
+    ];
 
     public function __construct()
     {
         $this->apiKey = config('app.thetvdb.api_key');
         $this->pin = config('app.thetvdb.pin');
         $this->tokenExpiration = config('app.thetvdb.token_expiration');
+        $this->languages = config('app.thetvdb.languages');
     }
 
     public function login(): bool
@@ -76,31 +83,75 @@ class TheTVDBApiService
         return [];
     }
 
-    public function getSeries(int $theTvDbId)
+    /**
+     * @note https://thetvdb.github.io/v4-api/#/Series/getSeriesBase
+     * @param int $theTvDbId
+     * @return array
+     */
+    public function getSeries(int $theTvDbId): array
     {
         return $this->request(sprintf('series/%s', $theTvDbId));
     }
 
-    public function getEpisode(int $theTvDbId)
+    /**
+     * @note https://thetvdb.github.io/v4-api/#/Series/getSeriesTranslation
+     * @param Series $series
+     * @return array
+     */
+    public function getSeriesTranslations(Series $series): array
     {
-        return $this->request(sprintf('episodes/%s', $theTvDbId));
-    }
-
-    public function getEpisodeTranslations(int $theTvDbId, array $languages = ['eng']): array
-    {
-        $keysToRemove = ['language', 'isPrimary'];
         $translations = [];
-        foreach ($languages as $lang) {
-            $data = $this->request(sprintf('episodes/%s/translations/%s', $theTvDbId, $lang))['data'];
-            $translations[$lang] = array_diff_key($data, array_flip($keysToRemove));
+        foreach ($this->languages as $lang) {
+            $data = $this->request(sprintf('series/%s/translations/%s', $series->theTvDbId, $lang))['data'] ?? [];
+            if (empty($data)) {
+                continue;
+            }
+
+            $translations[$lang] = array_diff_key($data, array_flip($this->translationsKeysIgnore));
         }
 
         return $translations;
     }
 
-    public function getSeriesEpisodes(int $seriesId, string $seasonType = 'default', string $lang = 'deu')
+    /**
+     * @note https://thetvdb.github.io/v4-api/#/Episodes/getEpisodeBase
+     * @param int $theTvDbId
+     * @return array
+     */
+    public function getEpisode(int $theTvDbId): array
     {
-        return $this->request(sprintf('series/%s/episodes/%s/%s', $seriesId, $seasonType, $lang), [
+        return $this->request(sprintf('episodes/%s', $theTvDbId));
+    }
+
+    /**
+     * @note https://thetvdb.github.io/v4-api/#/Episodes/getEpisodeTranslation
+     * @param int $theTvDbId
+     * @return array
+     */
+    public function getEpisodeTranslations(int $theTvDbId): array
+    {
+        $translations = [];
+        foreach ($this->languages as $lang) {
+            $data = $this->request(sprintf('episodes/%s/translations/%s', $theTvDbId, $lang))['data'] ?? [];
+            if (empty($data)) {
+                continue;
+            }
+
+            $translations[$lang] = array_diff_key($data, array_flip($this->translationsKeysIgnore));
+        }
+
+        return $translations;
+    }
+
+    /**
+     * @note https://thetvdb.github.io/v4-api/#/Series/getSeriesEpisodes
+     * @param Series $series
+     * @param string $seasonType
+     * @return array
+     */
+    public function getSeriesEpisodes(Series $series, string $seasonType = 'default'): array
+    {
+        return $this->request(sprintf('series/%s/episodes/%s', $series->theTvDbId, $seasonType), [
             'page' => 0,
         ]);
     }
@@ -108,10 +159,13 @@ class TheTVDBApiService
     public function importSeriesData(Series $series): SeriesData
     {
         $data = $this->getSeries($series->theTvDbId)['data'];
+        $translations = $this->getSeriesTranslations($series);
 
         return SeriesData::query()->updateOrCreate([
             SeriesData::series_id => $series->id,
-        ], $data);
+        ], array_merge($data, [
+            SeriesData::translations => $translations,
+        ]));
     }
 
     /**
@@ -120,7 +174,7 @@ class TheTVDBApiService
      */
     public function importSeriesEpisodes(Series $series): array
     {
-        $data = $this->getSeriesEpisodes($series->theTvDbId)['data']['episodes'];
+        $data = $this->getSeriesEpisodes($series)['data']['episodes'];
 
         $episodes = [];
         foreach ($data as $episode) {

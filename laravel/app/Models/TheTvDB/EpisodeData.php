@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $episode_id
- * @property Episode $episode
  * @property array $translations
+ * @property Episode $episode
  */
 class EpisodeData extends Model
 {
