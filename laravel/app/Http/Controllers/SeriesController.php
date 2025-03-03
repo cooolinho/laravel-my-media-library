@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class SeriesController extends Controller
 {
-    public function __construct(private TheTVDBApiService $theTVDBApiService)
+    public function __construct(private readonly TheTVDBApiService $theTVDBApiService)
     {
 
     }
@@ -19,6 +19,8 @@ class SeriesController extends Controller
             Series::theTvDbId => 248741,
         ])->first();
 
+        $suggestions = $this->getSuggestions('Breaking Bad');
+        dd($suggestions);
         return view('series.index', [
             'series' => $series
         ]);
@@ -27,11 +29,23 @@ class SeriesController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('q');
+        $page = $request->input('page');
 
-        $results = $this->theTVDBApiService->search($query)['data'] ?? [];
+        $suggestions = $this->getSuggestions($query, $page);
+
+        return response()->json($suggestions);
+    }
+
+    /**
+     * @param mixed $query
+     * @return array
+     */
+    private function getSuggestions(string $query, int $page = 0): array
+    {
+        $result = $this->theTVDBApiService->search($query);
         $suggestions = [];
-
-        foreach ($results as $result) {
+        dd($result, (int)ceil($result->getTotalItems() / $result->getTotalItems()));
+        foreach ($result['data'] as $result) {
             $name = $result['translations']['deu'] ?? $result['translations']['eng'];
             $theTvDbId = $result['tvdb_id'];
             $actionNewParams = [
@@ -51,7 +65,6 @@ class SeriesController extends Controller
                 'action_new' => url('/admin/series/create?' . http_build_query($actionNewParams)),
             ];
         }
-
-        return response()->json($suggestions);
+        return $suggestions;
     }
 }

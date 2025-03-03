@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Episode;
 use App\Models\Series;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\File;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 
 class SyncEpisodesOwnedFromFileJob implements ShouldQueue
 {
+    use Queueable;
+
     public const REGEX_SEASON_EPISODE = '/S([0-9]{2})E([0-9]{2,3})/';
 
     /**
@@ -27,8 +30,6 @@ class SyncEpisodesOwnedFromFileJob implements ShouldQueue
      * @var array
      */
     private array $episodesFound = [];
-
-    use Queueable;
 
     /**
      * Create a new job instance.
@@ -47,23 +48,28 @@ class SyncEpisodesOwnedFromFileJob implements ShouldQueue
     public function handle(): void
     {
         $this->identifier = $this->series->getEpisodesIdentifier();
-        $this->processFile($this->filePath);
+        $this->processFile();
     }
 
-
-    public function processFile($filePath): void
+    public function processFile(): void
     {
-        if (!File::exists($filePath)) {
+        if (!File::exists($this->filePath)) {
             $this->fail('File not found');
         }
 
-        $lines = File::lines($filePath);
+        $lines = [];
+        try {
+            $lines = File::lines($this->filePath);
+        } catch (FileNotFoundException $e) {
+            $this->fail($e->getMessage());
+        }
 
         foreach ($lines as $line) {
             $this->processLine($line);
         }
 
         Log::info('Totally found: '.count($this->episodesFound));
+        File::delete($this->filePath);
     }
 
     public function processLine($line): void

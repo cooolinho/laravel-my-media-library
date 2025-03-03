@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Client\TheTvDB\SearchResult;
 use App\Models\Episode;
 use App\Models\Series;
 use App\Models\TheTvDB\EpisodeData;
@@ -207,14 +208,15 @@ class TheTVDBApiService
         ]));
     }
 
-    public function search($query, string $type = 'series', string $language = 'deu', int $limit = 10)
+    public function search($query, int $page = 0, string $type = 'series', string $language = 'deu', int $limit = 10): SearchResult
     {
-        return $this->request('search', [
+        return new SearchResult($this->request('search', [
             'query' => $query,
+            'page' => $page,
             'type' => $type,
             'language' => $language,
             'limit' => $limit,
-        ]);
+        ]));
     }
 
     /**

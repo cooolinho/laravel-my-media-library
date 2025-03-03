@@ -64,6 +64,8 @@ class SyncAllEpisodesOwnedFromFileJob implements ShouldQueue
             ->update([
                 Episode::owned => true,
             ]);
+
+        File::delete($filePath);
     }
 
     private function findSeriesEpisodes(Series $series, string $text): array
