@@ -23,6 +23,11 @@ return new class extends Migration
         Schema::create('episode_data', function (Blueprint $table) {
             $table->id();
             $table->json('translations')->nullable();
+            $table->date('aired')->nullable();
+            $table->integer('runtime')->nullable();
+            $table->string('image')->nullable();
+            $table->datetime('lastUpdated')->nullable();
+            $table->year('year')->nullable();
             $table->foreignId('episode_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

@@ -20,6 +20,20 @@ return new class extends Migration
         Schema::create('series_data', function (Blueprint $table) {
             $table->id();
             $table->json('translations')->nullable();
+            $table->string('slug')->nullable();
+            $table->string('image')->nullable();
+            $table->date('firstAired')->nullable();
+            $table->date('lastAired')->nullable();
+            $table->date('nextAired')->nullable();
+            $table->integer('score')->nullable();
+            $table->string('status')->nullable();
+            $table->string('originalCountry')->nullable();
+            $table->string('originalLanguage')->nullable();
+            $table->tinyInteger('defaultSeasonType')->nullable();
+            $table->boolean('isOrderRandomized')->nullable();
+            $table->dateTime('lastUpdated')->nullable();
+            $table->smallInteger('averageRuntime')->nullable();
+            $table->year('year')->nullable();
             $table->foreignId('series_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

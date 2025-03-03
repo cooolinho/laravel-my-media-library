@@ -16,7 +16,7 @@ class SeriesController extends Controller
     public function index()
     {
         $series = Series::query()->where([
-            Series::theTvDbId => 273181,
+            Series::theTvDbId => 248741,
         ])->first();
 
         return view('series.index', [

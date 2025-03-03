@@ -161,11 +161,14 @@ class TheTVDBApiService
         $data = $this->getSeries($series->theTvDbId)['data'];
         $translations = $this->getSeriesTranslations($series);
 
+        $rawData = array_merge($data, [
+            SeriesData::translations => $translations,
+            SeriesData::status => $data[SeriesData::status]['name'] ?? null,
+        ]);
+
         return SeriesData::query()->updateOrCreate([
             SeriesData::series_id => $series->id,
-        ], array_merge($data, [
-            SeriesData::translations => $translations,
-        ]));
+        ], $this->filterResponseData($rawData));
     }
 
     /**
@@ -186,7 +189,7 @@ class TheTVDBApiService
             $episodes[] = Episode::query()->updateOrCreate([
                 Episode::belongs_to_series => $series->id,
                 Episode::theTvDbId => $episode['id'],
-            ], $episode);
+            ], $this->filterResponseData($episode));
         }
 
         return $episodes;
@@ -212,5 +215,20 @@ class TheTVDBApiService
             'language' => $language,
             'limit' => $limit,
         ]);
+    }
+
+    /**
+     * @param array $rawData
+     * @return array
+     */
+    private function filterResponseData(array $rawData): array
+    {
+        return array_filter($rawData, function ($item) {
+            if ($item === "" || $item === null) {
+                return false;
+            }
+
+            return true;
+        });
     }
 }

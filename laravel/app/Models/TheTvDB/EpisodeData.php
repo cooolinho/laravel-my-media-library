@@ -27,6 +27,11 @@ class EpisodeData extends Model
     const translations = 'translations';
     const name = 'name';
     const overview = 'overview';
+    const aired = 'aired';
+    const runtime = 'runtime';
+    const image = 'image';
+    const lastUpdated = 'lastUpdated';
+    const year = 'year';
 
     // relations
     const belongs_to_episode = 'episode_id';
@@ -36,6 +41,11 @@ class EpisodeData extends Model
     protected $fillable = [
         self::belongs_to_episode,
         self::translations,
+        self::aired,
+        self::runtime,
+        self::image,
+        self::lastUpdated,
+        self::year,
     ];
 
     protected $casts = [

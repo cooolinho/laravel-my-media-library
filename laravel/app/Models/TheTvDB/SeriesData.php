@@ -29,6 +29,20 @@ class SeriesData extends Model
     const translations = 'translations';
     const name = 'name';
     const overview = 'overview';
+    const slug = 'slug';
+    const image = 'image';
+    const firstAired = 'firstAired';
+    const lastAired = 'lastAired';
+    const nextAired = 'nextAired';
+    const score = 'score';
+    const status = 'status';
+    const originalCountry = 'originalCountry';
+    const originalLanguage = 'originalLanguage';
+    const defaultSeasonType = 'defaultSeasonType';
+    const isOrderRandomized = 'isOrderRandomized';
+    const lastUpdated = 'lastUpdated';
+    const averageRuntime = 'averageRuntime';
+    const year = 'year';
 
     // relations
     const series_id = 'series_id';
@@ -39,6 +53,20 @@ class SeriesData extends Model
     protected $fillable = [
         self::series_id,
         self::translations,
+        self::slug,
+        self::image,
+        self::firstAired,
+        self::lastAired,
+        self::nextAired,
+        self::score,
+        self::status,
+        self::originalCountry,
+        self::originalLanguage,
+        self::defaultSeasonType,
+        self::isOrderRandomized,
+        self::lastUpdated,
+        self::averageRuntime,
+        self::year,
     ];
 
     protected $casts = [
