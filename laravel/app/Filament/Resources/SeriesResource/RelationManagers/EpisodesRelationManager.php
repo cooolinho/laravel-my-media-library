@@ -18,9 +18,7 @@ class EpisodesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('theTvDbId')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Checkbox::make(Episode::owned),
             ]);
     }
 

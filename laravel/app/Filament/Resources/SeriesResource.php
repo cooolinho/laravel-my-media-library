@@ -5,8 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\SeriesResource\Pages;
 use App\Filament\Resources\SeriesResource\RelationManagers;
 use App\Models\Series;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,21 +14,6 @@ class SeriesResource extends Resource
     protected static ?string $model = Series::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make(Series::name)
-                    ->required()
-                    ->name(Series::name)
-                    ->maxLength(255),
-                TextInput::make(Series::theTvDbId)
-                    ->required()
-                    ->name(Series::theTvDbId)
-                    ->columnSpanFull(),
-            ]);
-    }
 
     public static function table(Table $table): Table
     {
