@@ -2,9 +2,13 @@
 
 namespace App\Filament\Resources\SeriesResource\Pages;
 
+use App\Config\FilesystemEnum;
 use App\Filament\Resources\SeriesResource;
+use App\Jobs\SyncAllEpisodesOwnedFromFileJob;
 use Filament\Actions;
+use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Storage;
 
 class ListSeries extends ListRecords
 {
@@ -14,6 +18,24 @@ class ListSeries extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Actions\Action::make('uploadFile')
+                ->label('Datei zum Abgleich hochladen')
+                ->modalContent(view('series.components.upload-file'))
+                ->form([
+                    FileUpload::make('file')
+                        ->label('Wählen Sie eine Datei aus')
+                        ->required()
+                        ->acceptedFileTypes(['text/*'])
+                        ->disk(FilesystemEnum::DISK_PUBLIC->value)
+                ])
+                ->action(function (array $data) {
+                    $this->processFile($data['file']);
+                }),
         ];
+    }
+
+    public function processFile(string $fileName): void
+    {
+        SyncAllEpisodesOwnedFromFileJob::dispatch(Storage::disk(FilesystemEnum::DISK_PUBLIC->value)->path($fileName));
     }
 }
