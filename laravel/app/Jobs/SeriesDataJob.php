@@ -20,7 +20,6 @@ class SeriesDataJob implements ShouldQueue
 
     public function handle(TheTVDBApiService $theTVDBApiService): void
     {
-        $theTVDBApiService->login();
         $theTVDBApiService->importSeriesData($this->series);
     }
 }

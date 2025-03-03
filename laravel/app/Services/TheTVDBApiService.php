@@ -6,33 +6,43 @@ use App\Models\Episode;
 use App\Models\Series;
 use App\Models\TheTvDB\EpisodeData;
 use App\Models\TheTvDB\SeriesData;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class TheTVDBApiService
 {
-    const SESSION_KEY_TVDB_BEARER_TOKEN = 'tvdb_bearer_token';
+    const CACHE_KEY_TVDB_BEARER_TOKEN = 'tvdb_bearer_token';
     protected string $apiUrl = 'https://api4.thetvdb.com/v4/';
     public string $apiKey;
     private string $pin;
+    private int $tokenExpiration;
+    private int $retries = 0;
+    private int $maxRetries = 3;
 
     public function __construct()
     {
         $this->apiKey = config('app.thetvdb.api_key');
         $this->pin = config('app.thetvdb.pin');
+        $this->tokenExpiration = config('app.thetvdb.token_expiration');
     }
 
     public function login(): bool
     {
-        $response = Http::post($this->apiUrl . 'login', [
-            'apikey' => $this->apiKey,
-            'pin' => $this->pin,
-        ]);
+        try {
+            $response = Http::post($this->apiUrl . 'login', [
+                'apikey' => $this->apiKey,
+                'pin' => $this->pin,
+            ]);
 
-        if ($response->successful()) {
-            $bearerToken = $response->json('data.token');
-            Session::put(self::SESSION_KEY_TVDB_BEARER_TOKEN, $bearerToken);
-            return true;
+            if ($response->successful()) {
+                $bearerToken = $response->json('data.token');
+                Cache::put(self::CACHE_KEY_TVDB_BEARER_TOKEN, $bearerToken, now()->addMinutes($this->tokenExpiration));
+
+                return true;
+            }
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
         }
 
         return false;
@@ -40,19 +50,30 @@ class TheTVDBApiService
 
     public function request(string $endpoint, array $params = [], string $method = 'GET')
     {
-        $bearerToken = Session::get(self::SESSION_KEY_TVDB_BEARER_TOKEN);
+        try {
+            $bearerToken = Cache::get(self::CACHE_KEY_TVDB_BEARER_TOKEN);
 
-        if (!$bearerToken) {
-            throw new \Exception('Not authenticated. Call login() first.');
+            if (!$bearerToken) {
+                if ($this->retries >= $this->maxRetries) {
+                    throw new \Exception('Max retries reached. Not authenticated.');
+                }
+
+                $this->retries++;
+                $this->login();
+
+                return $this->request($endpoint, $params, $method);
+            }
+
+            $response = Http::withToken($bearerToken)->$method($this->apiUrl . $endpoint, $params);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
         }
 
-        $response = Http::withToken($bearerToken)->$method($this->apiUrl . $endpoint, $params);
-
-        if ($response->successful()) {
-            return $response->json();
-        }
-
-        return ['error' => $response->body()];
+        return [];
     }
 
     public function getSeries(int $theTvDbId)

@@ -20,7 +20,6 @@ class SeriesEpisodesJob implements ShouldQueue
 
     public function handle(TheTVDBApiService $theTVDBApiService): void
     {
-        $theTVDBApiService->login();
         $episodes = $theTVDBApiService->importSeriesEpisodes($this->series);
 
         foreach ($episodes as $episode) {

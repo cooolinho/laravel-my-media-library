@@ -19,7 +19,6 @@ class EpisodeDataJob implements ShouldQueue
 
     public function handle(TheTVDBApiService $theTVDBApiService): void
     {
-        $theTVDBApiService->login();
         $theTVDBApiService->importEpisodesData($this->episode);
     }
 }
