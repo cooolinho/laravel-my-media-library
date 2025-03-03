@@ -33,6 +33,7 @@ class Episode extends Model
 
     // relations
     const belongs_to_series = 'series_id';
+    const has_one_data = 'data';
     public $timestamps = false;
 
     protected $fillable = [

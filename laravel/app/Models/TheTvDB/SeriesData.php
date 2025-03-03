@@ -10,11 +10,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property int $id
  * @property string $series_id
+ * @property array $translations
  * @property Series $series
  **/
 class SeriesData extends Model
 {
     use HasTimestamps;
+    use TranslatableTrait;
 
     const TABLE = 'series_data';
 
@@ -25,6 +27,8 @@ class SeriesData extends Model
 
     // the tv db properties
     const translations = 'translations';
+    const name = 'name';
+    const overview = 'overview';
 
     // relations
     const series_id = 'series_id';

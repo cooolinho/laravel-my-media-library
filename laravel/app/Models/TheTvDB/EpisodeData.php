@@ -15,13 +15,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class EpisodeData extends Model
 {
     use HasTimestamps;
+    use TranslatableTrait;
 
     const TABLE = 'episode_data';
 
     // Properties
-    const translations = 'translations';
     const created_at = self::CREATED_AT;
     const updated_at = self::UPDATED_AT;
+
+    // tv db
+    const translations = 'translations';
+    const name = 'name';
+    const overview = 'overview';
 
     // relations
     const belongs_to_episode = 'episode_id';

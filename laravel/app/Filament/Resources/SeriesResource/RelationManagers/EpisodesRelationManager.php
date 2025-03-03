@@ -29,8 +29,9 @@ class EpisodesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute(Episode::theTvDbId)
             ->columns([
+                Tables\Columns\TextColumn::make(Episode::seasonNumber),
                 Tables\Columns\TextColumn::make(Episode::number),
-                Tables\Columns\TextColumn::make(Episode::season),
+                Tables\Columns\TextColumn::make(Episode::has_one_data . '.' . 'nameTranslation'),
                 Tables\Columns\TextColumn::make(Episode::theTvDbId),
                 Tables\Columns\IconColumn::make(Episode::owned)
                     ->boolean(),
