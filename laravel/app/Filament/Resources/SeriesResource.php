@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SeriesResource\Pages;
 use App\Filament\Resources\SeriesResource\RelationManagers;
+use App\Filament\Resources\SeriesResource\Widgets\SeriesStatsWidget;
+use App\Models\Episode;
 use App\Models\Series;
 use App\Models\TheTvDB\SeriesData;
 use Filament\Infolists;
@@ -22,10 +24,37 @@ class SeriesResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\IconColumn::make('complete')
+                ->boolean()
+                ->state(function (Series $record) {
+                    return $record->episodesComplete();
+                }),
                 Tables\Columns\TextColumn::make(Series::name)
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make(Series::theTvDbId)
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('countEpisodes')
+                    ->label('Episodes')
+                    ->state(function (Series $record) {
+                        return $record->episodes->count();
+                    })
+                    ->sortable(query: function ($query, string $direction) {
+                        $query->withCount(Series::has_many_episodes)->orderBy(Series::has_many_episodes . '_count', $direction);
+                    }),
+                Tables\Columns\TextColumn::make('ownedPercentage')
+                    ->label('Percentage')
+                    ->state(function (Series $record) {
+                        return $record->getEpisodeOwnedPercentage() . '%';
+                    })
+                    ->sortable(query: function ($query, string $direction) {
+                        $query
+                            ->withCount([Series::has_many_episodes, Series::has_many_episodes . ' as owned_episodes_count' => function ($query) {
+                                $query->where(Episode::owned, true);
+                            }])
+                            ->orderByRaw('(owned_episodes_count / ' . Series::has_many_episodes . '_count) * 100 ' . $direction);
+                    })
             ])
             ->filters([
                 //
@@ -86,5 +115,12 @@ class SeriesResource extends Resource
                     ->label('Overview')
                     ->columnSpanFull(),
             ]);
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            SeriesStatsWidget::class,
+        ];
     }
 }

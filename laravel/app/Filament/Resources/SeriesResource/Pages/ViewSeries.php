@@ -4,6 +4,7 @@ namespace App\Filament\Resources\SeriesResource\Pages;
 
 use App\Config\FilesystemEnum;
 use App\Filament\Resources\SeriesResource;
+use App\Filament\Resources\SeriesResource\Widgets\SeriesStatsWidget;
 use App\Jobs\SyncEpisodesOwnedFromFileJob;
 use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
@@ -40,5 +41,12 @@ class ViewSeries extends ViewRecord
             $this->record,
             Storage::disk(FilesystemEnum::DISK_PUBLIC->value)->path($fileName)
         );
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            SeriesStatsWidget::class,
+        ];
     }
 }

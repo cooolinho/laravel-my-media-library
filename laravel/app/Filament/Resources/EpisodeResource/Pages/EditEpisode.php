@@ -3,8 +3,12 @@
 namespace App\Filament\Resources\EpisodeResource\Pages;
 
 use App\Filament\Resources\EpisodeResource;
+use App\Models\Episode;
 use Filament\Actions;
+use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+
 
 class EditEpisode extends EditRecord
 {
@@ -16,5 +20,13 @@ class EditEpisode extends EditRecord
             Actions\ViewAction::make(),
             Actions\DeleteAction::make(),
         ];
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Forms\Components\Checkbox::make(Episode::owned),
+            ]);
     }
 }

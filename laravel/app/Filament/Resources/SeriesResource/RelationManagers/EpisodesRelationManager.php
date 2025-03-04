@@ -39,11 +39,13 @@ class EpisodesRelationManager extends RelationManager
                 EpisodeResource::getOwnedFilter(),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->url(fn ($record) => EpisodeResource::getUrl('view', ['record' => $record->id]))
+                    ->openUrlInNewTab(true),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

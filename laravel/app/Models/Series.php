@@ -58,4 +58,28 @@ class Series extends Model
 
         return $identifier;
     }
+
+    public function getEpisodeOwnedPercentage(): float
+    {
+        $countAll = $this->episodes->count();
+        $countOwned = $this->getEpisodesOwnedCount();
+
+        if ($countOwned <= 0) {
+            return 0;
+        }
+
+        return round(100 / $countAll * $countOwned, 2);
+    }
+
+    public function getEpisodesOwnedCount(): int
+    {
+        return $this->episodes
+            ->where(Episode::owned, true)
+            ->count();
+    }
+
+    public function episodesComplete(): bool
+    {
+        return $this->getEpisodeOwnedPercentage() >= 100;
+    }
 }
