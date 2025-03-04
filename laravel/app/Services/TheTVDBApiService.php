@@ -7,6 +7,7 @@ use App\Models\Episode;
 use App\Models\Series;
 use App\Models\TheTvDB\EpisodeData;
 use App\Models\TheTvDB\SeriesData;
+use App\Settings\TheTvDbSettings;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -14,12 +15,12 @@ use Illuminate\Support\Facades\Log;
 class TheTVDBApiService
 {
     const CACHE_KEY_TVDB_BEARER_TOKEN = 'tvdb_bearer_token';
-    protected string $apiUrl = 'https://api4.thetvdb.com/v4/';
-    public string $apiKey;
+    protected string $apiUrl;
+    private string $apiKey;
     private string $pin;
     private int $tokenExpiration;
     private int $retries = 0;
-    private int $maxRetries = 3;
+    private int $maxRetries;
     private array $languages;
     private array $translationsKeysIgnore = [
         'language',
@@ -29,10 +30,14 @@ class TheTVDBApiService
 
     public function __construct()
     {
+        $this->apiUrl = config('app.thetvdb.api_url');
         $this->apiKey = config('app.thetvdb.api_key');
         $this->pin = config('app.thetvdb.pin');
-        $this->tokenExpiration = config('app.thetvdb.token_expiration');
-        $this->languages = config('app.thetvdb.languages');
+
+        $settings = new TheTvDbSettings();
+        $this->languages = $settings->languages;
+        $this->maxRetries = $settings->loginRetries;
+        $this->tokenExpiration = $settings->tokenExpiration;
     }
 
     public function login(): bool

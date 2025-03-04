@@ -5,7 +5,7 @@ namespace App\Settings;
 use Filament\Forms\Components\Toggle;
 use Spatie\LaravelSettings\Settings;
 
-class JobSettings extends Settings
+class JobSettings extends Settings implements FormSchemaInterface
 {
     public bool $seriesDataJob_enabled = true;
     public bool $episodeDataJob_enabled = true;
@@ -18,20 +18,18 @@ class JobSettings extends Settings
         return 'jobs';
     }
 
-    public static function getFormSchema(string $inputName): array
+    public static function getFormSchema(): array
     {
-        $prefix = sprintf('%s.%s.', $inputName, self::group());
-
         return [
-            Toggle::make($prefix . 'seriesDataJob_enabled')
+            Toggle::make('seriesDataJob_enabled')
                 ->label('seriesDataJob_enabled'),
-            Toggle::make($prefix . 'episodeDataJob_enabled')
+            Toggle::make('episodeDataJob_enabled')
                 ->label('episodeDataJob_enabled'),
-            Toggle::make($prefix . 'seriesEpisodesJob_enabled')
+            Toggle::make('seriesEpisodesJob_enabled')
                 ->label('seriesEpisodesJob_enabled'),
-            Toggle::make($prefix . 'syncAllEpisodesOwnedFromFileJob_enabled')
+            Toggle::make('syncAllEpisodesOwnedFromFileJob_enabled')
                 ->label('syncAllEpisodesOwnedFromFileJob_enabled'),
-            Toggle::make($prefix . 'syncEpisodesOwnedFromFileJob_enabled')
+            Toggle::make('syncEpisodesOwnedFromFileJob_enabled')
                 ->label('syncEpisodesOwnedFromFileJob_enabled'),
         ];
     }
