@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Http\Client\TheTvDB\SearchResult;
+use App\Http\Client\TheTvDB\ApiResponse;
 use App\Models\Episode;
 use App\Models\Series;
 use App\Models\TheTvDB\EpisodeData;
@@ -27,17 +27,19 @@ class TheTVDBApiService
         'isPrimary',
         'aliases',
     ];
+    private string $languageDefault;
 
     public function __construct()
     {
         $this->apiUrl = config('app.thetvdb.api_url');
         $this->apiKey = config('app.thetvdb.api_key');
         $this->pin = config('app.thetvdb.pin');
+        $this->maxRetries = config('app.thetvdb.max_login_retries');
+        $this->tokenExpiration = config('app.thetvdb.token_expiration');
 
         $settings = new TheTvDbSettings();
         $this->languages = $settings->languages;
-        $this->maxRetries = $settings->loginRetries;
-        $this->tokenExpiration = $settings->tokenExpiration;
+        $this->languageDefault = $settings->languageDefault;
     }
 
     public function login(): bool
@@ -213,18 +215,66 @@ class TheTVDBApiService
         ]));
     }
 
-    public function search($query, int $page = 0, string $type = 'series', string $language = 'deu', int $limit = 10): SearchResult
+    /**
+     * @note https://thetvdb.github.io/v4-api/#/Search/getSearchResults
+     *
+     * @param string $query
+     * @param int $page
+     * @param int $limit
+     * @param string $type
+     * @param string|null $language
+     * @param int|null $year
+     * @param string|null $company
+     * @param string|null $country
+     * @param string|null $director
+     * @param string|null $primaryType
+     * @param string|null $network
+     * @param string|null $remote_id
+     * @param int|null $offset
+     * @return ApiResponse
+     */
+    public function search(
+        string $query,
+        int $page = 0,
+        int $limit = 5,
+        string $type = 'series',
+        string $language = null,
+        int $year = null,
+        string $company = null,
+        string $country = null,
+        string $director = null,
+        string $primaryType = null,
+        string $network = null,
+        string $remote_id = null,
+        int $offset = null,
+    ): ApiResponse
     {
-        return new SearchResult($this->request('search', [
+        if (!$language) {
+            $language = $this->languageDefault;
+        }
+
+        $parameters = array_filter([
             'query' => $query,
             'page' => $page,
             'type' => $type,
             'language' => $language,
             'limit' => $limit,
-        ]));
+            'year' => $year,
+            'company' => $company,
+            'country' => $country,
+            'director' => $director,
+            'primaryType' => $primaryType,
+            'network' => $network,
+            'remote_id' => $remote_id,
+            'offset' => $offset,
+        ]);
+
+        return new ApiResponse($this->request('search', $parameters));
     }
 
     /**
+     * removes items with empty or null values
+     *
      * @param array $rawData
      * @return array
      */

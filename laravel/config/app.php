@@ -127,9 +127,7 @@ return [
         'api_url' => env('THETVDB_API_URL', 'https://api4.thetvdb.com/v4/'),
         'api_key' => env('THETVDB_API_KEY', ''),
         'pin' => env('THETVDB_API_PIN', ''),
-        'locale_language_mapping' => [
-            'en' => 'eng',
-            'de' => 'deu',
-        ],
+        'token_expiration' => env('THETVDB_API_TOKEN_EXPIRATION', 43200), // 1 month
+        'max_login_retries' => env('THETVDB_API_MAX_LOGIN_RETRIES', 3),
     ],
 ];

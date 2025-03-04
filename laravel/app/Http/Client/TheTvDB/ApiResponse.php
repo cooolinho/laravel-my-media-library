@@ -2,7 +2,7 @@
 
 namespace App\Http\Client\TheTvDB;
 
-class SearchResult
+class ApiResponse
 {
     private string $status;
     private array $data;
@@ -13,20 +13,6 @@ class SearchResult
         $this->status = $response['status'] ?? 'error';
         $this->data = $response['data'] ?? [];
         $this->links = $response['links'] ?? [];
-    }
-
-    public function hasLinkPrevious(): bool
-    {
-        return $this->links['prev'] !== null;
-    }
-
-    public function hasLinkNext(): bool
-    {
-        if (($this->getCurrentPage() + 1) === $this->getTotalPages()) {
-            return false;
-        }
-
-        return $this->links['next'] !== null;
     }
 
     public function getTotalItems(): int
@@ -52,20 +38,5 @@ class SearchResult
     public function getTotalPages(): int
     {
         return (int)ceil($this->getTotalItems() / $this->getPageSize());
-    }
-
-    /**
-     * read page number from link self
-     * @return int
-     */
-    public function getCurrentPage(): int
-    {
-        $url = $this->links['self'];
-        $parts = parse_url($url);
-
-        $queryParams = [];
-        parse_str($parts['query'], $queryParams);
-
-        return isset($queryParams['page']) ? (int) $queryParams['page'] : 0;
     }
 }

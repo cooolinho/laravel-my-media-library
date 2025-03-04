@@ -3,20 +3,21 @@
 namespace App\Settings;
 
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Spatie\LaravelSettings\Settings;
 
 class TheTvDbSettings extends Settings implements FormSchemaInterface
 {
-    public array $languages = ['eng'];
-    public int $loginRetries = 3;
-    public int $tokenExpiration = 43200;
+    const LANGUAGE_ENG = 'eng';
+    const LANGUAGE_FALLBACK = self::LANGUAGE_ENG;
+
+    public array $languages = [self::LANGUAGE_ENG];
+    public string $languageDefault = self::LANGUAGE_ENG;
 
     private static array $languageOptions = [
         'ces',
         'dan',
         'deu',
-        'eng',
+        self::LANGUAGE_ENG,
         'fin',
         'fra',
         'heb',
@@ -48,10 +49,9 @@ class TheTvDbSettings extends Settings implements FormSchemaInterface
                 ->options(array_combine(self::$languageOptions, self::$languageOptions))
                 ->multiple()
                 ->label('Languages'),
-            TextInput::make('loginRetries')
-                ->label('loginRetries'),
-            TextInput::make('tokenExpiration')
-                ->label('tokenExpiration'),
+            Select::make('languageDefault')
+                ->options(array_combine(self::$languageOptions, self::$languageOptions))
+                ->label('languageDefault'),
         ];
     }
 }

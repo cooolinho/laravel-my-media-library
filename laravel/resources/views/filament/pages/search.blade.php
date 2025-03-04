@@ -1,36 +1,36 @@
+@php
+    use App\Contracts\TheTVDBSchema\SearchResult;
+@endphp
+
 <x-filament::page>
     @push('styles')
         @vite('resources/css/filament.css')
     @endpush
 
-    <div class="p-6">
-        <input
-            type="text"
-            id="searchInput"
-            class="border p-2 rounded w-full"
-            placeholder="Geben Sie mindestens 3 Buchstaben ein..."
-            wire:model.live.debounce.1000ms="query"
-{{--            wire:model="query"--}}
-{{--            wire:change="queryChanged($el)"--}}
-        />
+    <x-filament-panels::form wire:submit="submit">
+        {{ $this->form }}
 
+        <x-filament-panels::form.actions
+            :actions="$this->getCachedFormActions()"
+            :full-width="$this->hasFullWidthFormActions()"
+        />
+    </x-filament-panels::form>
+
+    <div class="p-6">
         <div id="searchResults" class="search-results">
-                @foreach($series as $data)
-                    @php
-                        $name = $data['translations']['deu'] ?? $data['translations']['eng'];
-                    @endphp
+                @foreach($searchResults as $searchResult)
                     <div class="result-card">
-                        <img class="result-image" src="{{ $data['image_url'] ?? '' }}" alt="">
+                        <img class="result-image" src="{{ $searchResult[SearchResult::image_url] }}" alt="">
                         <div class="result-info">
-                            <h3 class="result-name">{{ $name }}</h3>
-                            <p class="result-overview">{{ $data['overview'] ?? '' }}</p>
+                            <h3 class="result-name">{{ $searchResult[SearchResult::name] }}</h3>
+                            <p class="result-overview">{{ $searchResult[SearchResult::overview] }}</p>
                             <div class="result-details">
-                                <span class="result-year">Jahr: {{ $data['year'] ?? '' }}</span>
-                                <span class="result-status">Status: {{ $data['status'] ?? '' }}</span>
-                                <span class="result-airtime">Erstausstrahlung: {{ $data['first_air_time'] ?? '' }}</span>
+                                <span class="result-year">Jahr: {{ $searchResult[SearchResult::year] }}</span>
+                                <span class="result-status">Status: {{ $searchResult[SearchResult::status] }}</span>
+                                <span class="result-airtime">Erstausstrahlung: {{ $searchResult[SearchResult::first_air_time] }}</span>
                             </div>
                             <div class="result-actions">
-                                <x-filament::link color="success" :href="$this->createSeriesUrl($name, $data['tvdb_id'])">
+                                <x-filament::link color="success" :href="$this->createSeriesUrl($searchResult[SearchResult::name], $searchResult[SearchResult::tvdb_id])">
                                     Hinzufügen
                                 </x-filament::link>
                             </div>
@@ -39,16 +39,13 @@
                 @endforeach
         </div>
 
-        <x-filament::button wire:click="decreasePage" :disabled="$hasLinkPrevious === false">
-            Vorherige Seite
-        </x-filament::button>
-
-        <x-filament::button>
-            Seite {{ $page + 1 }} / {{ $totalPages }}
-        </x-filament::button>
-
-        <x-filament::button wire:click="increasePage" :disabled="$hasLinkNext === false">
-            Nächste Seite
-        </x-filament::button>
+        @if(count($searchResults) >0)
+            <x-filament::pagination
+                :paginator="$this->getPaginator()"
+                :page-options="$pageOptions"
+                :current-page-option-property="'pageSize'"
+                :extreme-links="true"
+            />
+        @endif
     </div>
 </x-filament::page>
