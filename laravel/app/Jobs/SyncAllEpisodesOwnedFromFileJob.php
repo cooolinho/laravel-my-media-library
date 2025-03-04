@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Episode;
 use App\Models\Series;
+use App\Settings\JobSettings;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Queue\Queueable;
@@ -34,10 +35,14 @@ class SyncAllEpisodesOwnedFromFileJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(JobSettings $settings): void
     {
-        $this->series = Series::all();
+        if (!$settings->syncAllEpisodesOwnedFromFileJob_enabled) {
+            $this->fail(new JobNotActivatedException());
+            return;
+        }
 
+        $this->series = Series::all();
         $this->processFile($this->filePath);
     }
 

@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Episode;
 use App\Models\Series;
+use App\Settings\JobSettings;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -45,8 +46,13 @@ class SyncEpisodesOwnedFromFileJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(JobSettings $settings): void
     {
+        if (!$settings->syncEpisodesOwnedFromFileJob_enabled) {
+            $this->fail(new JobNotActivatedException());
+            return;
+        }
+
         $this->identifier = $this->series->getEpisodesIdentifier();
         $this->processFile();
     }
