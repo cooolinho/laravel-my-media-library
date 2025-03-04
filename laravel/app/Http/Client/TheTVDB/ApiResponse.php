@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Client\TheTvDB;
+namespace App\Http\Client\TheTVDB;
 
 class ApiResponse
 {
@@ -8,7 +8,7 @@ class ApiResponse
     private array $data;
     private array $links;
 
-    public function __construct(array $response)
+    public function __construct(array $response = [])
     {
         $this->status = $response['status'] ?? 'error';
         $this->data = $response['data'] ?? [];

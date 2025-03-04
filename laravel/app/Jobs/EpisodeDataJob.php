@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Episode;
-use App\Services\TheTVDBApiService;
+use App\Services\ImportDataService;
 use App\Settings\JobSettings;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -18,13 +18,13 @@ class EpisodeDataJob implements ShouldQueue
         $this->episode = $episode;
     }
 
-    public function handle(JobSettings $settings, TheTVDBApiService $theTVDBApiService): void
+    public function handle(JobSettings $settings, ImportDataService $service): void
     {
         if (!$settings->episodeDataJob_enabled) {
             $this->fail(new JobNotActivatedException());
             return;
         }
 
-        $theTVDBApiService->importEpisodesData($this->episode);
+        $service->importEpisodesData($this->episode);
     }
 }

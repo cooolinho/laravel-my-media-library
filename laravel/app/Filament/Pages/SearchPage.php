@@ -3,9 +3,9 @@
 namespace App\Filament\Pages;
 
 use App\Contracts\TheTVDBSchema\SearchResult;
-use App\Http\Client\TheTvDB\ApiResponse;
+use App\Http\Client\TheTVDB\ApiResponse;
+use App\Http\Client\TheTVDB\TheTVDBApi;
 use App\Models\Series;
-use App\Services\TheTVDBApiService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -35,15 +35,15 @@ class SearchPage extends Page implements HasForms
     public int $totalItems = 0;
     public int $totalPages = 1;
     public array $searchResults = [];
-    private ?TheTVDBApiService $theTVDBApiService = null;
+    private ?TheTVDBApi $api = null;
 
     /**
-     * @param TheTVDBApiService $theTVDBApiService
+     * @param TheTVDBApi $api
      * @return void
      */
-    public function boot(TheTVDBApiService $theTVDBApiService): void
+    public function boot(TheTVDBApi $api): void
     {
-        $this->theTVDBApiService = $theTVDBApiService;
+        $this->theTVDBApiService = $api;
     }
 
     /**

@@ -1,18 +1,14 @@
 <?php
 
-namespace App\Services;
+namespace App\Http\Client\TheTVDB;
 
-use App\Http\Client\TheTvDB\ApiResponse;
-use App\Models\Episode;
 use App\Models\Series;
-use App\Models\TheTvDB\EpisodeData;
-use App\Models\TheTvDB\SeriesData;
 use App\Settings\TheTvDbSettings;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class TheTVDBApiService
+class TheTVDBApi
 {
     const CACHE_KEY_TVDB_BEARER_TOKEN = 'tvdb_bearer_token';
     protected string $apiUrl;
@@ -42,6 +38,9 @@ class TheTVDBApiService
         $this->languageDefault = $settings->languageDefault;
     }
 
+    /**
+     * @return bool
+     */
     public function login(): bool
     {
         try {
@@ -63,7 +62,13 @@ class TheTVDBApiService
         return false;
     }
 
-    public function request(string $endpoint, array $params = [], string $method = 'GET')
+    /**
+     * @param string $endpoint
+     * @param array $params
+     * @param string $method
+     * @return ApiResponse
+     */
+    public function request(string $endpoint, array $params = [], string $method = 'GET'): ApiResponse
     {
         try {
             $bearerToken = Cache::get(self::CACHE_KEY_TVDB_BEARER_TOKEN);
@@ -82,21 +87,21 @@ class TheTVDBApiService
             $response = Http::withToken($bearerToken)->$method($this->apiUrl . $endpoint, $params);
 
             if ($response->successful()) {
-                return $response->json();
+                return new ApiResponse($response->json());
             }
         } catch (\Throwable $e) {
             Log::error($e->getMessage());
         }
 
-        return [];
+        return new ApiResponse();
     }
 
     /**
      * @note https://thetvdb.github.io/v4-api/#/Series/getSeriesBase
      * @param int $theTvDbId
-     * @return array
+     * @return ApiResponse
      */
-    public function getSeries(int $theTvDbId): array
+    public function getSeries(int $theTvDbId): ApiResponse
     {
         return $this->request(sprintf('series/%s', $theTvDbId));
     }
@@ -110,7 +115,7 @@ class TheTVDBApiService
     {
         $translations = [];
         foreach ($this->languages as $lang) {
-            $data = $this->request(sprintf('series/%s/translations/%s', $series->theTvDbId, $lang))['data'] ?? [];
+            $data = $this->request(sprintf('series/%s/translations/%s', $series->theTvDbId, $lang))->getData();
             if (empty($data)) {
                 continue;
             }
@@ -124,9 +129,9 @@ class TheTVDBApiService
     /**
      * @note https://thetvdb.github.io/v4-api/#/Episodes/getEpisodeBase
      * @param int $theTvDbId
-     * @return array
+     * @return ApiResponse
      */
-    public function getEpisode(int $theTvDbId): array
+    public function getEpisode(int $theTvDbId): ApiResponse
     {
         return $this->request(sprintf('episodes/%s', $theTvDbId));
     }
@@ -140,7 +145,7 @@ class TheTVDBApiService
     {
         $translations = [];
         foreach ($this->languages as $lang) {
-            $data = $this->request(sprintf('episodes/%s/translations/%s', $theTvDbId, $lang))['data'] ?? [];
+            $data = $this->request(sprintf('episodes/%s/translations/%s', $theTvDbId, $lang))->getData();
             if (empty($data)) {
                 continue;
             }
@@ -155,64 +160,13 @@ class TheTVDBApiService
      * @note https://thetvdb.github.io/v4-api/#/Series/getSeriesEpisodes
      * @param string $theTvDbId
      * @param string $seasonType
-     * @return array
+     * @return ApiResponse
      */
-    public function getSeriesEpisodes(string $theTvDbId, string $seasonType = 'default'): array
+    public function getSeriesEpisodes(string $theTvDbId, string $seasonType = 'default'): ApiResponse
     {
         return $this->request(sprintf('series/%s/episodes/%s', $theTvDbId, $seasonType), [
             'page' => 0,
         ]);
-    }
-
-    public function importSeriesData(Series $series): SeriesData
-    {
-        $data = $this->getSeries($series->theTvDbId)['data'];
-        $translations = $this->getSeriesTranslations($series);
-
-        $rawData = array_merge($data, [
-            SeriesData::translations => $translations,
-            SeriesData::status => $data[SeriesData::status]['name'] ?? null,
-        ]);
-
-        return SeriesData::query()->updateOrCreate([
-            SeriesData::series_id => $series->id,
-        ], $this->filterResponseData($rawData));
-    }
-
-    /**
-     * @param Series $series
-     * @param bool $ignoreSpecials
-     * @return array<Episode>
-     */
-    public function importSeriesEpisodes(Series $series, bool $ignoreSpecials = true): array
-    {
-        $data = $this->getSeriesEpisodes($series->theTvDbId)['data']['episodes'];
-
-        $episodes = [];
-        foreach ($data as $episode) {
-            if ($ignoreSpecials && $episode[Episode::seasonNumber] <= 0) {
-                continue;
-            }
-
-            $episodes[] = Episode::query()->updateOrCreate([
-                Episode::belongs_to_series => $series->id,
-                Episode::theTvDbId => $episode['id'],
-            ], $this->filterResponseData($episode));
-        }
-
-        return $episodes;
-    }
-
-    public function importEpisodesData(Episode $episode): EpisodeData
-    {
-        $data = $this->getEpisode($episode->theTvDbId)['data'];
-        $translations = $this->getEpisodeTranslations($episode->theTvDbId);
-
-        return EpisodeData::query()->updateOrCreate([
-            EpisodeData::belongs_to_episode => $episode->id,
-        ], array_merge($data, [
-            EpisodeData::translations => $translations,
-        ]));
     }
 
     /**
@@ -235,18 +189,18 @@ class TheTVDBApiService
      */
     public function search(
         string $query,
-        int $page = 0,
-        int $limit = 5,
+        int    $page = 0,
+        int    $limit = 5,
         string $type = 'series',
         string $language = null,
-        int $year = null,
+        int    $year = null,
         string $company = null,
         string $country = null,
         string $director = null,
         string $primaryType = null,
         string $network = null,
         string $remote_id = null,
-        int $offset = null,
+        int    $offset = null,
     ): ApiResponse
     {
         if (!$language) {
@@ -269,23 +223,6 @@ class TheTVDBApiService
             'offset' => $offset,
         ]);
 
-        return new ApiResponse($this->request('search', $parameters));
-    }
-
-    /**
-     * removes items with empty or null values
-     *
-     * @param array $rawData
-     * @return array
-     */
-    private function filterResponseData(array $rawData): array
-    {
-        return array_filter($rawData, function ($item) {
-            if ($item === "" || $item === null) {
-                return false;
-            }
-
-            return true;
-        });
+        return $this->request('search', $parameters);
     }
 }

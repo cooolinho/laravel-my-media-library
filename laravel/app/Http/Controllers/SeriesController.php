@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Client\TheTVDB\TheTVDBApi;
 use App\Models\Series;
-use App\Services\TheTVDBApiService;
 use Illuminate\Http\Request;
 
 class SeriesController extends Controller
 {
-    public function __construct(private readonly TheTVDBApiService $theTVDBApiService)
+    public function __construct(private readonly TheTVDBApi $api)
     {
 
     }
