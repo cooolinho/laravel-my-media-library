@@ -2,6 +2,7 @@
 
 namespace App\Models\TheTvDB;
 
+use App\Models\Series;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

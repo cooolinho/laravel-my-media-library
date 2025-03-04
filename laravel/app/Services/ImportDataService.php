@@ -46,7 +46,7 @@ class ImportDataService
             }
 
             $episodes[] = Episode::query()->updateOrCreate([
-                Episode::belongs_to_series => $series->id,
+                Episode::series_id => $series->id,
                 Episode::theTvDbId => $episode['id'],
             ], $this->filterResponseData($episode));
         }

@@ -20,11 +20,11 @@ class SettingsPage extends Page implements HasForms
     use InteractsWithForms;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog';
-    protected static ?string $navigationLabel = 'Einstellungen';
+    protected static ?string $navigationLabel = 'Settings';
     protected static ?int $navigationSort = 99;
 
     protected static string $view = 'filament.pages.settings';
-    protected static ?string $title = 'Einstellungen';
+    protected static ?string $title = 'Settings';
 
     public array $settings = [];
     const FORM_INPUT = 'settings';
@@ -76,9 +76,9 @@ class SettingsPage extends Page implements HasForms
     protected function getFormActions(): array
     {
         return [
-            Action::make('Speichern')
+            Action::make('submit')
                 ->submit('submit')
-                ->label('Einstellungen speichern'),
+                ->label('Save'),
         ];
     }
 
@@ -91,7 +91,7 @@ class SettingsPage extends Page implements HasForms
         }
 
         Notification::make()
-            ->title(__('Einstellungen gespeichert!'))
+            ->title(__('Saved!'))
             ->success()
             ->send();
     }

@@ -32,7 +32,8 @@ class Episode extends Model
     const theTvDbId = 'theTvDbId';
 
     // relations
-    const belongs_to_series = 'series_id';
+    const series_id = 'series_id';
+    const belongs_to_series = 'series';
     const has_one_data = 'data';
     public $timestamps = false;
 
@@ -41,7 +42,7 @@ class Episode extends Model
         self::seasonNumber,
         self::owned,
         self::theTvDbId,
-        self::belongs_to_series,
+        self::series_id,
     ];
 
     public function series(): BelongsTo

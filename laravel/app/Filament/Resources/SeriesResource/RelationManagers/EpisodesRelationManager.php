@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SeriesResource\RelationManagers;
 
+use App\Filament\Resources\EpisodeResource;
 use App\Models\Episode;
 use App\Models\Series;
 use Filament\Forms;
@@ -35,13 +36,14 @@ class EpisodesRelationManager extends RelationManager
                     ->boolean(),
             ])
             ->filters([
-                //
+                EpisodeResource::getOwnedFilter(),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

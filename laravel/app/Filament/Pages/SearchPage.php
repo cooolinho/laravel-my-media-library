@@ -22,7 +22,7 @@ class SearchPage extends Page implements HasForms
     use InteractsWithForms;
 
     protected static ?string $navigationIcon = 'heroicon-o-magnifying-glass';
-    protected static ?string $navigationLabel = 'Suche'; // Name im Menü
+    protected static ?string $navigationLabel = 'Search'; // Name im Menü
     protected static ?int $navigationSort = 2; // Sortierung im Menü
 
     protected static string $view = 'filament.pages.search';
@@ -43,7 +43,7 @@ class SearchPage extends Page implements HasForms
      */
     public function boot(TheTVDBApi $api): void
     {
-        $this->theTVDBApiService = $api;
+        $this->api = $api;
     }
 
     /**
@@ -114,7 +114,7 @@ class SearchPage extends Page implements HasForms
      */
     public function updateSearch(): void
     {
-        if (!$this->theTVDBApiService) {
+        if (!$this->api) {
             return;
         }
 
@@ -127,7 +127,7 @@ class SearchPage extends Page implements HasForms
         $page = max(0, $this->page - 1);
 
         // search with query
-        $result = $this->theTVDBApiService->search(
+        $result = $this->api->search(
             $this->query,
             $page,
             $this->pageSize,
