@@ -4,6 +4,7 @@ namespace App\Filament\Resources\SeriesResource\Pages;
 
 use App\Config\FilesystemEnum;
 use App\Filament\Resources\SeriesResource;
+use App\Filament\Resources\SeriesResource\Widgets\SeriesJobsWidget;
 use App\Filament\Resources\SeriesResource\Widgets\SeriesStatsWidget;
 use App\Jobs\SyncEpisodesOwnedFromFileJob;
 use Filament\Actions;
