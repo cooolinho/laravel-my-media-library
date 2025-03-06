@@ -42,3 +42,23 @@ migrate your database to add the properties:
 ```bash
 php artisan migrate
 ```
+
+
+## Filament
+Publishing configuration
+```bash
+php artisan vendor:publish --tag=filament-config
+```
+Publishing translations
+```bash
+php artisan vendor:publish --tag=filament-panels-translations
+```
+To optimize Filament for production, you should run the following command in your deployment script:
+```bash
+php artisan filament:optimize
+```
+
+To clear the caches at once, you can run:
+```bash
+php artisan filament:optimize-clear
+```

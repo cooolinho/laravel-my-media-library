@@ -2,13 +2,15 @@
 
 namespace App\Jobs;
 
+use App\Jobs\AbstractBaseJob as Job;
+use App\Jobs\Exceptions\JobNotActivatedException;
 use App\Models\Series;
 use App\Services\ImportDataService;
 use App\Settings\JobSettings;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
-class SeriesEpisodesJob implements ShouldQueue
+class SeriesEpisodesJob extends Job implements ShouldQueue
 {
     use Queueable;
 

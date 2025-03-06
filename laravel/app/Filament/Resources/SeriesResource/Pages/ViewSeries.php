@@ -6,7 +6,10 @@ use App\Config\FilesystemEnum;
 use App\Filament\Resources\SeriesResource;
 use App\Filament\Resources\SeriesResource\Widgets\SeriesJobsWidget;
 use App\Filament\Resources\SeriesResource\Widgets\SeriesStatsWidget;
+use App\Jobs\SeriesDataJob;
+use App\Jobs\SeriesEpisodesJob;
 use App\Jobs\SyncEpisodesOwnedFromFileJob;
+use App\Models\Series;
 use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Pages\ViewRecord;
@@ -32,6 +35,12 @@ class ViewSeries extends ViewRecord
                 ->action(function (array $data) {
                     $this->processFile($data['file']);
                 }),
+            Actions\Action::make('loadSeriesData')
+                ->requiresConfirmation()
+                ->action(fn (Series $series) => SeriesDataJob::dispatch($series)),
+            Actions\Action::make('loadSeriesEpisodesData')
+                ->requiresConfirmation()
+                ->action(fn (Series $series) => SeriesEpisodesJob::dispatch($series))
         ];
     }
 

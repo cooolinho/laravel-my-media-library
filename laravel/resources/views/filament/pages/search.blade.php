@@ -3,10 +3,6 @@
 @endphp
 
 <x-filament::page>
-    @push('styles')
-        @vite('resources/css/filament.css')
-    @endpush
-
     <x-filament-panels::form wire:submit="submit">
         {{ $this->form }}
 

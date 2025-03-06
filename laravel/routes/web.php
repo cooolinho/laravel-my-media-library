@@ -2,8 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('/', function () {
+//    return redirect('/admin');
+//});
 
-Route::get('/series', [\App\Http\Controllers\SeriesController::class, 'index']);
+Route::get('/test', [\App\Http\Controllers\TestController::class, 'index']);

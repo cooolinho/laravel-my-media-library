@@ -6,10 +6,10 @@ trait UriParameterTrait
 {
     public function mount(): void
     {
-        $this->handleUri();
+        $this->fillFromUriParameters();
     }
-    
-    protected function handleUri(): void
+
+    protected function fillFromUriParameters(): void
     {
         $model = static::getModel();
         foreach (request()->all() as $query => $value) {

@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Jobs\AbstractBaseJob as Job;
+use App\Jobs\Exceptions\JobNotActivatedException;
 use App\Models\Episode;
 use App\Models\Series;
 use App\Settings\JobSettings;
@@ -10,7 +12,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\File;
 
-class SyncAllEpisodesOwnedFromFileJob implements ShouldQueue
+class SyncAllEpisodesOwnedFromFileJob extends Job implements ShouldQueue
 {
     use Queueable;
 

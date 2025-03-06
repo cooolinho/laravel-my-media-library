@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\EpisodeResource\Pages;
 
 use App\Filament\Resources\EpisodeResource;
+use App\Jobs\EpisodeDataJob;
 use App\Models\Episode;
 use App\Models\TheTvDB\EpisodeData;
 use Filament\Actions;
@@ -18,6 +19,9 @@ class ViewEpisode extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
+            Actions\Action::make('loadEpisodeData')
+                ->requiresConfirmation()
+                ->action(fn (Episode $episode) => EpisodeDataJob::dispatch($episode))
         ];
     }
 

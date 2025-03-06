@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SeriesResource\Widgets;
 use App\Jobs\EpisodeDataJob;
 use App\Jobs\SeriesDataJob;
 use App\Jobs\SeriesEpisodesJob;
+use App\Jobs\SyncEpisodesOwnedFromFileJob;
 use App\Models\Job;
 use App\Models\Series;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -16,12 +17,12 @@ class SeriesStatsWidget extends BaseWidget
     protected function getCards(): array
     {
         return [
-            $this->getEpisodesStats(),
+            $this->getEpisodesCard(),
             $this->getJobsStats(),
         ];
     }
 
-    private function getEpisodesStats()
+    private function getEpisodesCard()
     {
         $countAll = $this->record->episodes->count();
         $countOwned = $this->record->getEpisodesOwnedCount();
@@ -36,13 +37,23 @@ class SeriesStatsWidget extends BaseWidget
 
     private function getJobsStats()
     {
-        $seriesDataJobs = Job::findByJobAndModelId(SeriesDataJob::class, $this->record->id)->count();
-        $seriesEpisodesJobs = Job::findByJobAndModelId(SeriesEpisodesJob::class, $this->record->id)->count();
+        $seriesDataJobs = Job::findByJobAndRecordId(SeriesDataJob::class, $this->record->id)
+            ->count();
+        $seriesEpisodesDataJobs = Job::findByJobAndRecordId(SeriesEpisodesJob::class, $this->record->id)
+            ->count();
+        $syncEpisodesOwnedJobs = Job::findByJobAndRecordId(SyncEpisodesOwnedFromFileJob::class, $this->record->id)
+            ->count();
 
         $episodeIds = $this->record->episodes->pluck('id')->toArray();
-        $episodeJobs = EpisodeDataJob::findByIds($episodeIds)->count();
+        $episodesDataJobs = EpisodeDataJob::findByEpisodeIds($episodeIds)
+            ->count();
 
-        $total = array_sum([$seriesDataJobs, $seriesEpisodesJobs, $episodeJobs]);
+        $total = array_sum([
+            $seriesDataJobs,
+            $seriesEpisodesDataJobs,
+            $episodesDataJobs,
+            $syncEpisodesOwnedJobs
+        ]);
 
         return BaseWidget\Stat::make('Jobs', $total)
             ->description($total <= 0 ? 'complete' : 'running')
