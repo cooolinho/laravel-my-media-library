@@ -3,8 +3,8 @@
 namespace App\Filament\Pages;
 
 use App\Contracts\TheTVDBSchema\SearchResult;
-use App\Http\Client\TheTVDB\ApiResponse;
-use App\Http\Client\TheTVDB\TheTVDBApi;
+use App\Http\Client\TheTVDB\Api\SearchApi;
+use App\Http\Client\TheTVDB\TheTVDBApiResponse;
 use App\Models\Series;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Section;
@@ -35,13 +35,13 @@ class SearchPage extends Page implements HasForms
     public int $totalItems = 0;
     public int $totalPages = 1;
     public array $searchResults = [];
-    private ?TheTVDBApi $api = null;
+    private ?SearchApi $api = null;
 
     /**
-     * @param TheTVDBApi $api
+     * @param SearchApi $api
      * @return void
      */
-    public function boot(TheTVDBApi $api): void
+    public function boot(SearchApi $api): void
     {
         $this->api = $api;
     }
@@ -127,7 +127,7 @@ class SearchPage extends Page implements HasForms
         $page = max(0, $this->page - 1);
 
         // search with query
-        $result = $this->api->search(
+        $result = $this->api->getSearchResults(
             $this->query,
             $page,
             $this->pageSize,
@@ -185,10 +185,10 @@ class SearchPage extends Page implements HasForms
     }
 
     /**
-     * @param ApiResponse $result
+     * @param TheTVDBApiResponse $result
      * @return void
      */
-    private function setResultData(ApiResponse $result): void
+    private function setResultData(TheTVDBApiResponse $result): void
     {
         $this->searchResults = [];
         foreach ($result->getData() as $data) {

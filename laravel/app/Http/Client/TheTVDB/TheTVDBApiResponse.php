@@ -2,7 +2,7 @@
 
 namespace App\Http\Client\TheTVDB;
 
-class ApiResponse
+class TheTVDBApiResponse
 {
     private string $status;
     private array $data;

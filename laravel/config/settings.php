@@ -8,7 +8,7 @@ return [
      */
     'settings' => [
         App\Settings\JobSettings::class,
-        App\Settings\TheTvDbSettings::class,
+        App\Settings\TheTVDBSettings::class,
     ],
 
     /*

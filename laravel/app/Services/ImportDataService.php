@@ -2,23 +2,30 @@
 
 namespace App\Services;
 
-use App\Http\Client\TheTVDB\TheTVDBApi;
+use App\Http\Client\TheTVDB\Api\EpisodesApi;
+use App\Http\Client\TheTVDB\Api\LanguagesApi;
+use App\Http\Client\TheTVDB\Api\SeriesApi;
 use App\Models\Episode;
+use App\Models\Language;
 use App\Models\Series;
 use App\Models\TheTvDB\EpisodeData;
 use App\Models\TheTvDB\SeriesData;
 
 class ImportDataService
 {
-    public function __construct(protected TheTVDBApi $api)
+    public function __construct(
+        protected SeriesApi   $seriesApi,
+        protected EpisodesApi $episodesApi,
+        protected LanguagesApi $languagesApi,
+    )
     {
 
     }
 
     public function importSeriesData(Series $series): SeriesData
     {
-        $data = $this->api->getSeries($series->theTvDbId)->getData();
-        $translations = $this->api->getSeriesTranslations($series);
+        $data = $this->seriesApi->getSeriesBase($series->theTvDbId)->getData();
+        $translations = $this->seriesApi->getSeriesTranslations($series->theTvDbId);
 
         $rawData = array_merge($data, [
             SeriesData::translations => $translations,
@@ -37,7 +44,7 @@ class ImportDataService
      */
     public function importSeriesEpisodes(Series $series, bool $ignoreSpecials = true): array
     {
-        $data = $this->api->getSeriesEpisodes($series->theTvDbId)->getData()['episodes'] ?? [];
+        $data = $this->seriesApi->getSeriesEpisodes($series->theTvDbId)->getData()['episodes'] ?? [];
 
         $episodes = [];
         foreach ($data as $episode) {
@@ -56,14 +63,26 @@ class ImportDataService
 
     public function importEpisodesData(Episode $episode): EpisodeData
     {
-        $data = $this->api->getEpisode($episode->theTvDbId)->getData();
-        $translations = $this->api->getEpisodeTranslations($episode->theTvDbId);
+        $data = $this->episodesApi->getEpisodeBase($episode->theTvDbId)->getData();
+        $translations = $this->episodesApi->getEpisodeTranslations($episode->theTvDbId);
 
         return EpisodeData::query()->updateOrCreate([
             EpisodeData::belongs_to_episode => $episode->id,
         ], array_merge($data, [
             EpisodeData::translations => $translations,
         ]));
+    }
+
+    public function importLanguages(): void
+    {
+        $data = $this->languagesApi->getAllLanguages()->getData();
+        $filteredData = array_map(function($entity) {
+            // remove shortCode bc is always null
+            unset($entity['shortCode']);
+            return $entity;
+        }, $data);
+
+        Language::query()->upsert($filteredData, Language::id);
     }
 
     /**

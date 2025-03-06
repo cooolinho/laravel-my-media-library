@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SeriesEpisodesJob;
-use App\Models\Series;
+use App\Services\ImportDataService;
 
 class TestController extends Controller
 {
-    public function index()
+    public function index(ImportDataService $service)
     {
-        $series = Series::find(3);
-        SeriesEpisodesJob::dispatch($series);
-        dd($series);
+        $service->importLanguages();
         return view('series.index');
     }
 }

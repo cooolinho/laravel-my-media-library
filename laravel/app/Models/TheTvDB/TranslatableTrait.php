@@ -2,7 +2,7 @@
 
 namespace App\Models\TheTvDB;
 
-use App\Settings\TheTvDbSettings;
+use App\Settings\TheTVDBSettings;
 use Exception;
 
 trait TranslatableTrait
@@ -44,7 +44,7 @@ trait TranslatableTrait
 
     private function getTranslationProperty(string $property): string
     {
-        $settings = new TheTvDbSettings();
+        $settings = new TheTVDBSettings();
         $locale = $settings->languageDefault;
         $translations = $this->getTranslationsAttribute();
 
@@ -57,7 +57,7 @@ trait TranslatableTrait
             }
 
             // try to find translation with fallback locale
-            $fallback = $translations[TheTvDbSettings::LANGUAGE_FALLBACK][$property] ?? '';
+            $fallback = $translations[TheTVDBSettings::LANGUAGE_FALLBACK][$property] ?? '';
             if (!empty($fallback)) {
                 return $fallback;
             }

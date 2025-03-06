@@ -2,7 +2,9 @@
 
 namespace App\Filament\Pages;
 
+use App\Services\ImportDataService;
 use App\Settings\FormSchemaInterface;
+use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Section;
@@ -122,5 +124,21 @@ class SettingsPage extends Page implements HasForms
         }
 
         return $fields;
+    }
+
+    public function getHeaderActions(): array
+    {
+        return [
+            Actions\Action::make('importLanguages')
+                ->requiresConfirmation()
+                ->action(function (ImportDataService $service) {
+                    $service->importLanguages();
+
+                    Notification::make()
+                        ->title(__('Imported!'))
+                        ->success()
+                        ->send();
+                }),
+        ];
     }
 }

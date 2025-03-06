@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class JobResource extends Resource
 {
@@ -74,5 +75,60 @@ class JobResource extends Resource
         return [
             'index' => Pages\ListJobs::route('/'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return false;
+    }
+
+    public static function canForceDelete(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canForceDeleteAny(): bool
+    {
+        return false;
+    }
+
+    public static function canReorder(): bool
+    {
+        return false;
+    }
+
+    public static function canReplicate(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canRestore(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canRestoreAny(): bool
+    {
+        return false;
+    }
+
+    public static function canView(Model $record): bool
+    {
+        return false;
     }
 }
