@@ -8,5 +8,7 @@ return new class extends SettingsMigration
     {
         $this->migrator->add('theTVDB.languages', ['eng']);
         $this->migrator->add('theTVDB.languageDefault', 'eng');
+        $this->migrator->add('theTVDB.updatesSinceXDays', 1);
+        $this->migrator->add('theTVDB.autoUpdates', true);
     }
 };

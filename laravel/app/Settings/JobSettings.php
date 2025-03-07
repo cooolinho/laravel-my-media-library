@@ -12,6 +12,7 @@ class JobSettings extends Settings implements FormSchemaInterface
     public bool $seriesEpisodesJob_enabled = true;
     public bool $syncAllEpisodesOwnedFromFileJob_enabled = true;
     public bool $syncEpisodesOwnedFromFileJob_enabled = true;
+    public bool $updatesJob_enabled = true;
 
     public static function group(): string
     {
@@ -31,6 +32,8 @@ class JobSettings extends Settings implements FormSchemaInterface
                 ->label('syncAllEpisodesOwnedFromFileJob_enabled'),
             Toggle::make('syncEpisodesOwnedFromFileJob_enabled')
                 ->label('syncEpisodesOwnedFromFileJob_enabled'),
+            Toggle::make('updatesJob_enabled')
+                ->label('updatesJob_enabled'),
         ];
     }
 }

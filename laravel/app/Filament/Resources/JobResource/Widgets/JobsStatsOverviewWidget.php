@@ -7,6 +7,7 @@ use App\Jobs\SeriesDataJob;
 use App\Jobs\SeriesEpisodesJob;
 use App\Jobs\SyncAllEpisodesOwnedFromFileJob;
 use App\Jobs\SyncEpisodesOwnedFromFileJob;
+use App\Jobs\UpdatesJob;
 use App\Models\Job;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
@@ -21,6 +22,7 @@ class JobsStatsOverviewWidget extends BaseWidget
             $this->getEpisodeDataJobsStat(),
             $this->getSyncAllEpisodesOwnedFromFileJobsStat(),
             $this->getSyncEpisodesOwnedFromFileJobs(),
+            $this->getUpdateSeriesJobs(),
         ];
     }
 
@@ -91,6 +93,15 @@ class JobsStatsOverviewWidget extends BaseWidget
     {
         $count = SyncEpisodesOwnedFromFileJob::all()->count();
         return BaseWidget\Stat::make('SyncEpisodesOwnedFromFileJob', $count)
+            ->icon('heroicon-o-cog')
+            ->chart([0, $count])
+            ->color($this->getColor($count));
+    }
+
+    private function getUpdateSeriesJobs()
+    {
+        $count = UpdatesJob::all()->count();
+        return BaseWidget\Stat::make('UpdatesJob', $count)
             ->icon('heroicon-o-cog')
             ->chart([0, $count])
             ->color($this->getColor($count));

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\TheTvDB\SeriesData;
 use Database\Factories\SeriesFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -81,5 +82,14 @@ class Series extends Model
     public function episodesComplete(): bool
     {
         return $this->getEpisodeOwnedPercentage() >= 100;
+    }
+
+    public static function findNotEnded(): Collection
+    {
+        return Series::query()
+            ->whereHas(Series::has_one_data, function (Builder $subQuery) {
+                $subQuery->where(SeriesData::status, '!=', 'Ended');
+            })
+            ->get();
     }
 }

@@ -62,4 +62,16 @@ class SearchApi extends BaseApi
 
         return $this->client->request('search', $parameters);
     }
+
+    /**
+     * search in IMDB or EIDR
+     *
+     * @note https://thetvdb.github.io/v4-api/#/Search/getSearchResultsByRemoteId
+     * @param string $remoteId
+     * @return TheTVDBApiResponse
+     */
+    public function getSearchResultsByRemoteId(string $remoteId): TheTVDBApiResponse
+    {
+        return $this->client->request(sprintf('search/remoteid/%s', $remoteId));
+    }
 }

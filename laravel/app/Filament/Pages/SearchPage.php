@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Contracts\TheTVDBSchema\SearchResult;
+use App\Filament\Resources\SeriesResource;
 use App\Http\Client\TheTVDB\Api\SearchApi;
 use App\Http\Client\TheTVDB\TheTVDBApiResponse;
 use App\Models\Series;
@@ -159,7 +160,7 @@ class SearchPage extends Page implements HasForms
             Series::theTvDbId => $theTvDbId,
         ];
 
-        return url('/admin/series/create?' . http_build_query($actionNewParams));
+        return SeriesResource::getUrl('create', $actionNewParams);
     }
 
     /**

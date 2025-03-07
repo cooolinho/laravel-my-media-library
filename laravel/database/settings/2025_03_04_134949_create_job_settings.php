@@ -11,5 +11,6 @@ return new class extends SettingsMigration
         $this->migrator->add('jobs.seriesEpisodesJob_enabled', true);
         $this->migrator->add('jobs.syncAllEpisodesOwnedFromFileJob_enabled', true);
         $this->migrator->add('jobs.syncEpisodesOwnedFromFileJob_enabled', true);
+        $this->migrator->add('jobs.updateSeriesJob_enabled', true);
     }
 };

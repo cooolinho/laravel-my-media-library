@@ -39,4 +39,9 @@ class TheTVDBApiResponse
     {
         return (int)ceil($this->getTotalItems() / $this->getPageSize());
     }
+
+    public function hasLinkNext(): bool
+    {
+        return $this->links['next'] !== null;
+    }
 }
