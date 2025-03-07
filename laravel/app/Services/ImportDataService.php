@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Contracts\TheTVDBSchema\ArtworkBaseRecord;
 use App\Http\Client\TheTVDB\Api\EpisodesApi;
 use App\Http\Client\TheTVDB\Api\LanguagesApi;
 use App\Http\Client\TheTVDB\Api\SeriesApi;
+use App\Models\Artwork;
 use App\Models\Episode;
 use App\Models\Language;
 use App\Models\Series;
@@ -13,6 +15,11 @@ use App\Models\TheTvDB\SeriesData;
 
 class ImportDataService
 {
+    /**
+     * @param SeriesApi $seriesApi
+     * @param EpisodesApi $episodesApi
+     * @param LanguagesApi $languagesApi
+     */
     public function __construct(
         protected SeriesApi   $seriesApi,
         protected EpisodesApi $episodesApi,
@@ -22,6 +29,10 @@ class ImportDataService
 
     }
 
+    /**
+     * @param Series $series
+     * @return SeriesData
+     */
     public function importSeriesData(Series $series): SeriesData
     {
         $data = $this->seriesApi->getSeriesBase($series->theTvDbId)->getData();
@@ -61,6 +72,10 @@ class ImportDataService
         return $episodes;
     }
 
+    /**
+     * @param Episode $episode
+     * @return EpisodeData
+     */
     public function importEpisodesData(Episode $episode): EpisodeData
     {
         $data = $this->episodesApi->getEpisodeBase($episode->theTvDbId)->getData();
@@ -73,6 +88,9 @@ class ImportDataService
         ]));
     }
 
+    /**
+     * @return void
+     */
     public function importLanguages(): void
     {
         $data = $this->languagesApi->getAllLanguages()->getData();
@@ -83,6 +101,31 @@ class ImportDataService
         }, $data);
 
         Language::query()->upsert($filteredData, Language::id);
+    }
+
+    /**
+     * @param Series $series
+     * @return void
+     */
+    public function importSeriesArtworks(Series $series): void
+    {
+        $data = $this->seriesApi->getSeriesArtworks($series->theTvDbId)->getData()['artworks'] ?? [];
+        $artworks = [];
+        foreach ($data as $artwork) {
+            $artworks[] = [
+                Artwork::series_id => $series->id,
+                Artwork::theTvDbId => $artwork[ArtworkBaseRecord::id],
+                Artwork::image => $artwork[ArtworkBaseRecord::image],
+                Artwork::thumbnail => $artwork[ArtworkBaseRecord::thumbnail],
+                Artwork::type => $artwork[ArtworkBaseRecord::type],
+            ];
+        }
+
+        if (empty($artworks)) {
+            return;
+        }
+
+        Artwork::query()->upsert($artworks, Artwork::theTvDbId);
     }
 
     /**

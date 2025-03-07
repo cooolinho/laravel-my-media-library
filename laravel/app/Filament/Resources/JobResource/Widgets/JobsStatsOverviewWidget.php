@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\JobResource\Widgets;
 
 use App\Jobs\EpisodeDataJob;
+use App\Jobs\SeriesArtworkJob;
 use App\Jobs\SeriesDataJob;
 use App\Jobs\SeriesEpisodesJob;
 use App\Jobs\SyncAllEpisodesOwnedFromFileJob;
@@ -19,6 +20,7 @@ class JobsStatsOverviewWidget extends BaseWidget
             $this->getTotalStat(),
             $this->getSeriesDataJobsStat(),
             $this->getSeriesEpisodesJobsStat(),
+            $this->getSeriesArtworksJobs(),
             $this->getEpisodeDataJobsStat(),
             $this->getSyncAllEpisodesOwnedFromFileJobsStat(),
             $this->getSyncEpisodesOwnedFromFileJobs(),
@@ -102,6 +104,15 @@ class JobsStatsOverviewWidget extends BaseWidget
     {
         $count = UpdatesJob::all()->count();
         return BaseWidget\Stat::make('UpdatesJob', $count)
+            ->icon('heroicon-o-cog')
+            ->chart([0, $count])
+            ->color($this->getColor($count));
+    }
+
+    private function getSeriesArtworksJobs()
+    {
+        $count = SeriesArtworkJob::all()->count();
+        return BaseWidget\Stat::make('SeriesArtworksJobs', $count)
             ->icon('heroicon-o-cog')
             ->chart([0, $count])
             ->color($this->getColor($count));

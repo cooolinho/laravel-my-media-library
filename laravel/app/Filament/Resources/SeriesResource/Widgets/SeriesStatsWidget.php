@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SeriesResource\Widgets;
 
 use App\Jobs\EpisodeDataJob;
+use App\Jobs\SeriesArtworkJob;
 use App\Jobs\SeriesDataJob;
 use App\Jobs\SeriesEpisodesJob;
 use App\Jobs\SyncEpisodesOwnedFromFileJob;
@@ -41,6 +42,8 @@ class SeriesStatsWidget extends BaseWidget
             ->count();
         $seriesEpisodesDataJobs = Job::findByJobAndRecordId(SeriesEpisodesJob::class, $this->record->id)
             ->count();
+        $seriesArtworksJobs = Job::findByJobAndRecordId(SeriesArtworkJob::class, $this->record->id)
+            ->count();
         $syncEpisodesOwnedJobs = Job::findByJobAndRecordId(SyncEpisodesOwnedFromFileJob::class, $this->record->id)
             ->count();
 
@@ -51,6 +54,7 @@ class SeriesStatsWidget extends BaseWidget
         $total = array_sum([
             $seriesDataJobs,
             $seriesEpisodesDataJobs,
+            $seriesArtworksJobs,
             $episodesDataJobs,
             $syncEpisodesOwnedJobs
         ]);

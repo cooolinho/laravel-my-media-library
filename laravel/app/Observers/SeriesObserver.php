@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\SeriesArtworkJob;
 use App\Jobs\SeriesDataJob;
 use App\Jobs\SeriesEpisodesJob;
 use App\Models\Series;
@@ -17,6 +18,7 @@ class SeriesObserver
         Log::info('Series "'. $series->name .'" created');
         SeriesDataJob::dispatch($series);
         SeriesEpisodesJob::dispatch($series);
+        SeriesArtworkJob::dispatch($series);
     }
 
     /**

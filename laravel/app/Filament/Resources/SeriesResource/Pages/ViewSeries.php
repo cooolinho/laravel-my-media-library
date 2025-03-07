@@ -4,15 +4,19 @@ namespace App\Filament\Resources\SeriesResource\Pages;
 
 use App\Config\FilesystemEnum;
 use App\Filament\Resources\SeriesResource;
+use App\Filament\Resources\SeriesResource\Widgets\SeriesArtworksWidget;
 use App\Filament\Resources\SeriesResource\Widgets\SeriesStatsWidget;
+use App\Jobs\SeriesArtworkJob;
 use App\Jobs\SeriesDataJob;
 use App\Jobs\SeriesEpisodesJob;
 use App\Jobs\SyncEpisodesOwnedFromFileJob;
+use App\Models\Artwork;
 use App\Models\Series;
 use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Storage;
+use ZipArchive;
 
 class ViewSeries extends ViewRecord
 {
@@ -39,7 +43,13 @@ class ViewSeries extends ViewRecord
                 ->action(fn (Series $series) => SeriesDataJob::dispatch($series)),
             Actions\Action::make('loadSeriesEpisodesData')
                 ->requiresConfirmation()
-                ->action(fn (Series $series) => SeriesEpisodesJob::dispatch($series))
+                ->action(fn (Series $series) => SeriesEpisodesJob::dispatch($series)),
+            Actions\Action::make('loadSeriesArtworks')
+                ->requiresConfirmation()
+                ->action(fn (Series $series) => SeriesArtworkJob::dispatch($series)),
+            Actions\Action::make('loadArtworksAsZip')
+                ->requiresConfirmation()
+                ->action(fn (Series $series) => $this->downloadArtworks($series)),
         ];
     }
 
@@ -57,5 +67,49 @@ class ViewSeries extends ViewRecord
         return [
             SeriesStatsWidget::class,
         ];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+            SeriesArtworksWidget::class,
+        ];
+    }
+
+    public function downloadArtworks(Series $series)
+    {
+        $artworks = $series->artworks->pluck(Artwork::image);
+
+        $zipFileName = sprintf('artworks-%s.zip', $series->data->slug ?? $series->theTvDbId);
+        $zipFilePath = storage_path("app/public/{$zipFileName}");
+
+        $zip = new ZipArchive();
+        if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+            foreach ($artworks as $imageUrl) {
+                $imageContent = $this->downloadImage($imageUrl);
+                if ($imageContent === false) {
+                    continue;
+                }
+
+                $imageName = basename(parse_url($imageUrl, PHP_URL_PATH));
+                $zip->addFromString($imageName, $imageContent);
+            }
+            $zip->close();
+        }
+
+        return response()->download($zipFilePath)->deleteFileAfterSend(true);
+    }
+
+    private function downloadImage($url)
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        $data = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        return ($httpCode == 200) ? $data : false;
     }
 }

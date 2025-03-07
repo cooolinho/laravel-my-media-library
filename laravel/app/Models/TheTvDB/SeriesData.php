@@ -3,6 +3,7 @@
 namespace App\Models\TheTvDB;
 
 use App\Models\Series;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property int $id
  * @property string $series_id
- * @property array $translations
+ * @property null|array $translations
+ * @property null|string name
+ * @property null|string overview
+ * @property null|string slug
+ * @property null|string image
+ * @property null|Carbon firstAired
+ * @property null|Carbon lastAired
+ * @property null|Carbon nextAired
+ * @property null|int score
+ * @property null|string status
+ * @property null|string originalCountry
+ * @property null|string originalLanguage
+ * @property null|int defaultSeasonType
+ * @property null|bool isOrderRandomized
+ * @property null|Carbon lastUpdated
+ * @property null|int averageRuntime
+ * @property null|int year
  * @property Series $series
  **/
 class SeriesData extends Model

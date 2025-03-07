@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $theTvDbId
  * @property SeriesData $data
  * @property Collection $episodes
+ * @property Collection $artworks
  */
 class Series extends Model
 {
@@ -29,6 +30,7 @@ class Series extends Model
 
     // relations
     const has_many_episodes = 'episodes';
+    const has_many_artworks = 'artworks';
     const has_one_data = 'data';
 
     public $timestamps = false;
@@ -41,6 +43,11 @@ class Series extends Model
     public function episodes(): HasMany
     {
         return $this->hasMany(Episode::class);
+    }
+
+    public function artworks(): HasMany
+    {
+        return $this->hasMany(Artwork::class);
     }
 
     public function data(): HasOne

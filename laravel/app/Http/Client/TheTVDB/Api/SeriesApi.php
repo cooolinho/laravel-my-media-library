@@ -2,6 +2,7 @@
 
 namespace App\Http\Client\TheTVDB\Api;
 
+use App\Http\Client\TheTVDB\Api\Enum\ArtworkTypeEnum;
 use App\Http\Client\TheTVDB\TheTVDBApiResponse;
 
 class SeriesApi extends BaseApi
@@ -47,6 +48,21 @@ class SeriesApi extends BaseApi
     {
         return $this->client->request(sprintf('series/%s/episodes/%s', $theTvDbId, $seasonType), [
             'page' => $page,
+        ]);
+    }
+
+    /**
+     * @note https://thetvdb.github.io/v4-api/#/Series/getSeriesArtworks
+     * @param string $theTvDbId
+     * @param string|null $lang
+     * @param ArtworkTypeEnum|null $type
+     * @return TheTVDBApiResponse
+     */
+    public function getSeriesArtworks(string $theTvDbId, string $lang = null, ArtworkTypeEnum $type = null): TheTVDBApiResponse
+    {
+        return $this->client->request(sprintf('series/%s/artworks', $theTvDbId), [
+            'lang' => $lang,
+            'type' => $type?->value,
         ]);
     }
 }
