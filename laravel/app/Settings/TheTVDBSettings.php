@@ -84,8 +84,7 @@ class TheTVDBSettings extends Settings implements FormSchemaInterface
     private static function handleChangedAutoUpdates(bool $autoUpdates): void
     {
         if ($autoUpdates && UpdatesJob::all()->count() <= 0) {
-            UpdatesJob::dispatch()
-                ->onQueue('test');
+            UpdatesJob::dispatch();
         }
     }
 }
