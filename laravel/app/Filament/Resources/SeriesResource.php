@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SeriesResource\Pages;
 use App\Filament\Resources\SeriesResource\RelationManagers;
-use App\Filament\Resources\SeriesResource\Widgets\SeriesStatsWidget;
 use App\Models\Episode;
 use App\Models\Series;
 use App\Models\TheTvDB\SeriesData;
@@ -115,12 +114,5 @@ class SeriesResource extends Resource
                     ->label('Overview')
                     ->columnSpanFull(),
             ]);
-    }
-
-    public static function getWidgets(): array
-    {
-        return [
-            SeriesStatsWidget::class,
-        ];
     }
 }

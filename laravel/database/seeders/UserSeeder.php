@@ -8,19 +8,19 @@ use App\Models\Link;
 use App\Models\MailBox;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class DatabaseSeeder extends Seeder
+class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call([
-            UserSeeder::class,
-            LanguageSeeder::class,
-            SeriesSeeder::class,
-            WarezLinkSeeder::class,
+        // create admin user
+        User::factory()->create([
+            User::name => 'Admin User',
+            User::email => 'admin@example.com',
         ]);
     }
 }

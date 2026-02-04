@@ -6,6 +6,7 @@ use App\Config\FilesystemEnum;
 use App\Filament\Resources\SeriesResource;
 use App\Filament\Resources\SeriesResource\Widgets\SeriesArtworksWidget;
 use App\Filament\Resources\SeriesResource\Widgets\SeriesStatsWidget;
+use App\Filament\Resources\SeriesResource\Widgets\WarezLinkWidget;
 use App\Jobs\SeriesArtworkJob;
 use App\Jobs\SeriesDataJob;
 use App\Jobs\SeriesEpisodesJob;
@@ -16,6 +17,7 @@ use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use ZipArchive;
 
 class ViewSeries extends ViewRecord
@@ -73,10 +75,11 @@ class ViewSeries extends ViewRecord
     {
         return [
             SeriesArtworksWidget::class,
+            WarezLinkWidget::class,
         ];
     }
 
-    public function downloadArtworks(Series $series)
+    public function downloadArtworks(Series $series): BinaryFileResponse
     {
         $artworks = $series->artworks->pluck(Artwork::image);
 
@@ -100,7 +103,7 @@ class ViewSeries extends ViewRecord
         return response()->download($zipFilePath)->deleteFileAfterSend(true);
     }
 
-    private function downloadImage($url)
+    private function downloadImage($url): bool|string
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
