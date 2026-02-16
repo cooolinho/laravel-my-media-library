@@ -18,9 +18,12 @@ class WarezLinkResource extends Resource
 {
     protected static ?string $model = WarezLink::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Link;
+    protected static ?string $navigationLabel = 'Links';
 
     protected static ?string $recordTitleAttribute = 'title';
+    protected static string|null|\UnitEnum $navigationGroup = 'Administration';
+    protected static ?int $navigationSort = 97;
 
     public static function form(Schema $schema): Schema
     {

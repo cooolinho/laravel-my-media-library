@@ -2,6 +2,13 @@
 
 namespace App\Filament\Resources\Episodes\Tables;
 
+use App\Filament\Resources\Episodes\Tables\Filters\OwnedFilter;
+use App\Filament\Resources\Episodes\Tables\Filters\SeasonFilter;
+use App\Filament\Resources\Episodes\Tables\Filters\SeriesFilter;
+use App\Filament\Resources\Episodes\Tables\Filters\SpecialsFilter;
+use App\Filament\Resources\Episodes\Tables\Filters\WithoutDataFilter;
+use App\Filament\Resources\Episodes\Tables\Filters\WithoutNameFilter;
+use App\Filament\Resources\Episodes\Tables\Filters\YearFilter;
 use App\Models\Episode;
 use App\Models\Series;
 use App\Models\TheTvDB\EpisodeData;
@@ -11,7 +18,6 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class EpisodesTable
@@ -37,15 +43,13 @@ class EpisodesTable
                     ->searchable(),
             ])
             ->filters([
-                SelectFilter::make(Episode::series_id)
-                    ->label('Series')
-                    ->options(
-                        Series::query()
-                            ->orderBy(Series::name, 'ASC')
-                            ->get()
-                            ->pluck(Series::name, Series::id)
-                    ),
-                self::getOwnedFilter(),
+                OwnedFilter::make(),
+                SeriesFilter::make(),
+                SeasonFilter::make(),
+                YearFilter::make(),
+                WithoutDataFilter::make(),
+                WithoutNameFilter::make(),
+                SpecialsFilter::make(),
             ])
             ->recordActions([
                 ViewAction::make(),
@@ -55,15 +59,6 @@ class EpisodesTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
-    }
-
-    public static function getOwnedFilter()
-    {
-        return SelectFilter::make(Episode::owned)
-            ->options([
-                true => 'Yes',
-                false => 'No',
             ]);
     }
 }

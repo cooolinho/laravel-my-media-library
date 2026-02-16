@@ -21,9 +21,12 @@ class SeriesResource extends Resource
 {
     protected static ?string $model = Series::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Tv;
 
     protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $navigationLabel = 'Serien';
+    protected static string|null|\UnitEnum $navigationGroup = 'Datenbank';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

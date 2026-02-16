@@ -21,7 +21,8 @@ class SettingsPage extends Page
     use InteractsWithForms;
 
     protected static string|null|\BackedEnum $navigationIcon = Heroicon::Cog;
-    protected static ?string $navigationLabel = 'Settings';
+    protected static ?string $navigationLabel = 'Einstellungen';
+    protected static string|null|\UnitEnum $navigationGroup = 'Administration';
     protected static ?int $navigationSort = 99;
 
     protected string $view = 'filament.pages.settings';

@@ -11,11 +11,11 @@ use Filament\Actions\CreateAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 
 class ListSeries extends ListRecords
 {
+    public string $viewMode = 'grid';
     protected static string $resource = SeriesResource::class;
 
     protected string $view = 'series.list-series-grid';
@@ -49,12 +49,6 @@ class ListSeries extends ListRecords
                     $this->processText($data['text']);
                 }),
         ];
-    }
-
-    public function getFilteredTableQuery(): Builder
-    {
-        // Nutze table() um die gefilterte Query mit allen Modifikatoren zu erhalten
-        return $this->table($this->getTable())->getQuery();
     }
 
     public function processFile(string $fileName): void

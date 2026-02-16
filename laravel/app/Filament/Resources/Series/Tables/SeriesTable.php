@@ -2,13 +2,20 @@
 
 namespace App\Filament\Resources\Series\Tables;
 
+use App\Filament\Resources\Series\Tables\Filters\CompletenessFilter;
+use App\Filament\Resources\Series\Tables\Filters\EpisodeCountFilter;
+use App\Filament\Resources\Series\Tables\Filters\OwnershipPercentageFilter;
+use App\Filament\Resources\Series\Tables\Filters\StatusFilter;
+use App\Filament\Resources\Series\Tables\Filters\WithoutArtworksFilter;
+use App\Filament\Resources\Series\Tables\Filters\WithoutDataFilter;
+use App\Filament\Resources\Series\Tables\Filters\WithoutEpisodesFilter;
+use App\Filament\Resources\Series\Tables\Filters\YearFilter;
 use App\Models\Episode;
 use App\Models\Series;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -17,13 +24,12 @@ class SeriesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn($query) => $query->with(['artworks', 'episodes']))
+            ->modifyQueryUsing(fn($query) => $query->with([
+                Series::has_many_artworks,
+                Series::has_many_episodes,
+                Series::has_one_data
+            ]))
             ->columns([
-                IconColumn::make('complete')
-                    ->boolean()
-                    ->state(function (Series $record) {
-                        return $record->episodesComplete();
-                    }),
                 TextColumn::make(Series::name)
                     ->searchable()
                     ->sortable(),
@@ -39,7 +45,7 @@ class SeriesTable
                         $query->withCount(Series::has_many_episodes)->orderBy(Series::has_many_episodes . '_count', $direction);
                     }),
                 TextColumn::make('ownedPercentage')
-                    ->label('Percentage')
+                    ->label('Im Besitz (%)')
                     ->state(function (Series $record) {
                         return $record->getEpisodeOwnedPercentage() . '%';
                     })
@@ -52,7 +58,11 @@ class SeriesTable
                     })
             ])
             ->filters([
-                //
+                StatusFilter::make(),
+                YearFilter::make(),
+                WithoutDataFilter::make(),
+                WithoutEpisodesFilter::make(),
+                WithoutArtworksFilter::make(),
             ])
             ->recordActions([
                 ViewAction::make(),

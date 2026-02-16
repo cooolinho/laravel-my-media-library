@@ -1,5 +1,6 @@
 <x-filament-panels::page>
-    <div x-data="{ viewMode: 'grid' }">
+    <div x-data="{ viewMode: localStorage.getItem('seriesViewMode') || 'grid' }"
+         x-init="$watch('viewMode', value => localStorage.setItem('seriesViewMode', value))">
 
         <!-- Ansichts-Umschalter -->
         <div class="series-view-toggle">
@@ -37,7 +38,7 @@
 
             <!-- Grid-Kachelansicht -->
             @php
-                $records = $this->getFilteredTableQuery()->get();
+                $records = $this->getFilteredSortedTableQuery()->get();
             @endphp
 
             <div class="series-grid">
@@ -59,21 +60,5 @@
             </div>
         </div>
     </div>
-
-    @push('scripts')
-        <script>
-            document.addEventListener('alpine:init', () => {
-                Alpine.data('viewMode', () => ({
-                    viewMode: localStorage.getItem('seriesViewMode') || 'grid',
-
-                    init() {
-                        this.$watch('viewMode', value => {
-                            localStorage.setItem('seriesViewMode', value);
-                        });
-                    }
-                }));
-            });
-        </script>
-    @endpush
 </x-filament-panels::page>
 

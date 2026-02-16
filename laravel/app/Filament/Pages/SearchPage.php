@@ -23,7 +23,7 @@ class SearchPage extends Page
     use InteractsWithForms;
 
     protected static string|null|\BackedEnum $navigationIcon = Heroicon::MagnifyingGlass;
-    protected static ?string $navigationLabel = 'Search'; // Name im Menü
+    protected static ?string $navigationLabel = 'TheTVDB Suche'; // Name im Menü
     protected static ?int $navigationSort = 2; // Sortierung im Menü
 
     protected string $view = 'filament.pages.search';

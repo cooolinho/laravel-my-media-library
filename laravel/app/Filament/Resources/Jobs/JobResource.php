@@ -19,6 +19,9 @@ class JobResource extends Resource
     protected static ?string $model = Job::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static ?string $navigationLabel = 'Jobs';
+    protected static string|null|\UnitEnum $navigationGroup = 'Administration';
+    protected static ?int $navigationSort = 98;
 
     protected static ?string $recordTitleAttribute = 'queue';
 
