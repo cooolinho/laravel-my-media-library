@@ -17,6 +17,7 @@ class SeriesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn($query) => $query->with(['artworks', 'episodes']))
             ->columns([
                 IconColumn::make('complete')
                     ->boolean()

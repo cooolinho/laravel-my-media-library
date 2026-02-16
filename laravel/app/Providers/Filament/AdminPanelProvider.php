@@ -9,7 +9,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -26,6 +25,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->path(config('filament.admin_panel.path', 'admin'))
             ->login()
             ->colors([
@@ -54,11 +54,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])
-            ->assets([
-                // run "php artisan filament:assets" after register a new asset
-                Css::make('filament', resource_path('css/filament.css')),
-                // Js::make('custom-script', resource_path('js/filament.js')),
             ]);
     }
 }
