@@ -4,28 +4,27 @@ namespace App\Filament\Pages;
 
 use App\Services\ImportDataService;
 use App\Settings\FormSchemaInterface;
-use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Str;
 use Spatie\LaravelSettings\Settings;
 
-class SettingsPage extends Page implements HasForms
+class SettingsPage extends Page
 {
     use InteractsWithFormActions;
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-cog';
+    protected static string|null|\BackedEnum $navigationIcon = Heroicon::Cog;
     protected static ?string $navigationLabel = 'Settings';
     protected static ?int $navigationSort = 99;
 
-    protected static string $view = 'filament.pages.settings';
+    protected string $view = 'filament.pages.settings';
     protected static ?string $title = 'Settings';
 
     public array $settings = [];
@@ -68,9 +67,12 @@ class SettingsPage extends Page implements HasForms
         $formSchemas = [];
         foreach ($sections as $heading => $schema) {
             $formSchemas[] = Section::make(Str::pascal($heading))
-                ->schema($schema)
-            ;
+                ->schema($schema);
         }
+
+        $formSchemas[] = Section::make('Actions')
+            ->heading(false)
+            ->schema($this->getFormActions());
 
         return $formSchemas;
     }
@@ -79,7 +81,7 @@ class SettingsPage extends Page implements HasForms
     {
         return [
             Action::make('submit')
-                ->submit('submit')
+                ->action('submit')
                 ->label('Save'),
         ];
     }
@@ -129,7 +131,7 @@ class SettingsPage extends Page implements HasForms
     public function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('importLanguages')
+            Action::make('importLanguages')
                 ->requiresConfirmation()
                 ->action(function (ImportDataService $service) {
                     $service->importLanguages();

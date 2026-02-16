@@ -3,30 +3,30 @@
 namespace App\Filament\Pages;
 
 use App\Contracts\TheTVDBSchema\SearchResult;
-use App\Filament\Resources\SeriesResource;
+use App\Filament\Resources\Series\SeriesResource;
 use App\Http\Client\TheTVDB\Api\SearchApi;
 use App\Http\Client\TheTVDB\TheTVDBApiResponse;
 use App\Models\Series;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class SearchPage extends Page implements HasForms
+class SearchPage extends Page
 {
     use InteractsWithFormActions;
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-magnifying-glass';
+    protected static string|null|\BackedEnum $navigationIcon = Heroicon::MagnifyingGlass;
     protected static ?string $navigationLabel = 'Search'; // Name im Menü
     protected static ?int $navigationSort = 2; // Sortierung im Menü
 
-    protected static string $view = 'filament.pages.search';
+    protected string $view = 'filament.pages.search';
 
     public string $query = '';
     public int $page = 1;
@@ -57,7 +57,10 @@ class SearchPage extends Page implements HasForms
                 ->schema([
                     TextInput::make('query')
                         ->label(false)
-                ])
+                ]),
+            Section::make('Actions')
+                ->heading(false)
+                ->schema($this->getFormActions()),
         ];
     }
 
@@ -68,7 +71,7 @@ class SearchPage extends Page implements HasForms
     {
         return [
             Action::make('search')
-                ->submit('submit')
+                ->action('submit')
                 ->label('Suche starten'),
         ];
     }
