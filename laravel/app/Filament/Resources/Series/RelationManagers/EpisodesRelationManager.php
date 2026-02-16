@@ -10,6 +10,7 @@ use App\Filament\Resources\Episodes\Tables\Filters\OwnedFilter;
 use App\Filament\Resources\Episodes\Tables\Filters\SeasonFilter;
 use App\Models\Episode;
 use App\Models\Series;
+use App\Models\TheTvDB\EpisodeData;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -38,12 +39,13 @@ class EpisodesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute(Episode::theTvDbId)
             ->columns([
-                TextColumn::make(Episode::seasonNumber),
-                TextColumn::make(Episode::number),
-                TextColumn::make(Episode::has_one_data . '.' . 'nameTranslation'),
-                TextColumn::make(Episode::theTvDbId),
                 IconColumn::make(Episode::owned)
                     ->boolean(),
+                TextColumn::make(Episode::seasonNumber),
+                TextColumn::make(Episode::number),
+                TextColumn::make(Episode::has_one_data . '.' . EpisodeData::name)
+                    ->label('Name'),
+                TextColumn::make(Episode::theTvDbId),
             ])
             ->filters([
                 OwnedFilter::make(),

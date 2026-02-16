@@ -33,7 +33,7 @@ class ViewEpisode extends ViewRecord
         // series name + SxxExx - episode name
         $name = $this->record->series->name;
         $identifier = $this->record->getIdentifier();
-        $episodeName = $this->record->data?->getNameTranslationAttribute();
+        $episodeName = $this->record->data?->getName();
 
         return "{$name} - {$identifier} - {$episodeName}";
     }

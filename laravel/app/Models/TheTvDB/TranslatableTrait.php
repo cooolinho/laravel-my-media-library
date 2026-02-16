@@ -7,6 +7,10 @@ use Exception;
 
 trait TranslatableTrait
 {
+    const string name = 'name';
+    const string overview = 'overview';
+    const string has_many_translations = 'translations';
+
     public function getName(): string
     {
         return $this->getNameTranslationAttribute();
@@ -29,12 +33,18 @@ trait TranslatableTrait
 
     public function getTranslationsAttribute(): array
     {
-        return json_decode($this->attributes[static::translations], true, 512, JSON_OBJECT_AS_ARRAY);
+        // First try to get translations from relationship table
+        if ($this->relationLoaded(static::has_many_translations)) {
+            return $this->getTranslationsFromRelation();
+        }
+
+        // Load translations from relation if not already loaded
+        return $this->getTranslationsFromRelation();
     }
 
     public function getNameTranslationAttribute(): string
     {
-        return $this->getTranslationProperty(static::translated_name);
+        return $this->getTranslationProperty(static::name);
     }
 
     public function getOverviewTranslationAttribute(): string
@@ -49,7 +59,7 @@ trait TranslatableTrait
         $translations = $this->getTranslationsAttribute();
 
         try {
-            return $translations[$locale][$property];
+            return $translations[$locale][$property] ?? '';
         } catch (Exception $e) {
             // if no translations found return empty string
             if (empty($translations)) {
@@ -66,4 +76,29 @@ trait TranslatableTrait
             return $translations[array_key_first($translations)][$property] ?? '';
         }
     }
+
+    /**
+     * Get translations from the relationship table
+     */
+    private function getTranslationsFromRelation(): array
+    {
+        $relationName = static::has_many_translations;
+
+        if (!method_exists($this, $relationName)) {
+            return [];
+        }
+
+        $translations = $this->$relationName()->get();
+        $result = [];
+
+        foreach ($translations as $translation) {
+            $result[$translation->lang] = [
+                static::name => $translation->name,
+                static::overview => $translation->overview,
+            ];
+        }
+
+        return $result;
+    }
 }
+

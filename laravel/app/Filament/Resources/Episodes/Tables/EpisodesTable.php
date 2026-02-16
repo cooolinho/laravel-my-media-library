@@ -15,6 +15,7 @@ use App\Filament\Resources\Episodes\Tables\Filters\YearFilter;
 use App\Models\Episode;
 use App\Models\Series;
 use App\Models\TheTvDB\EpisodeData;
+use App\Models\TheTvDB\EpisodeTranslation;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -35,22 +36,15 @@ class EpisodesTable
             ->columns([
                 IconColumn::make(Episode::owned)
                     ->boolean(),
-                TextColumn::make(Episode::seasonNumber)
-                    ->searchable(),
-                TextColumn::make(Episode::number)
-                    ->searchable(),
-                TextColumn::make(Episode::has_one_data . '.' . EpisodeData::translated_name)
-                    ->label('Name')
-                    ->searchable(true, function ($query, string $search) {
-                        $query->orWhereHas(Episode::has_one_data, function ($subQuery) use ($search) {
-                            $subQuery->where(EpisodeData::translations, 'like', "%{$search}%");
-                        });
-                    }),
+                TextColumn::make(Episode::seasonNumber),
+                TextColumn::make(Episode::number),
+                TextColumn::make(Episode::has_one_data . '.' . EpisodeData::name)
+                    ->label('Name'),
                 TextColumn::make(Episode::belongs_to_series . '.' . Series::name)
                     ->label('TV Show'),
-                TextColumn::make(Episode::theTvDbId)
-                    ->searchable(),
+                TextColumn::make(Episode::theTvDbId),
             ])
+            ->searchable()
             ->filters([
                 OwnedFilter::make(),
                 SeriesFilter::make(),
@@ -61,11 +55,14 @@ class EpisodesTable
                 SpecialsFilter::make(),
             ])
             ->searchUsing(function (Builder $query, string $search) {
-                $query->where(Episode::notes, 'like', "%{$search}%", 'or');
-                $query->where(Episode::theTvDbId, 'like', "%{$search}%", 'or');
-
-                $query->orWhereHas(Episode::has_one_data, function ($subQuery) use ($search) {
-                    $subQuery->where(EpisodeData::translations, 'like', "%{$search}%");
+                $query->orWhere(Episode::notes, 'like', "%{$search}%");
+                $query->orWhere(Episode::theTvDbId, 'like', "%{$search}%");
+                $query->orWhereHas(Episode::has_one_data, function (Builder $subQuery) use ($search) {
+                    $subQuery->whereHas(EpisodeData::has_many_translations, function (Builder $translationQuery) use ($search) {
+                        $translationQuery
+                            ->where(EpisodeTranslation::name, 'like', "%{$search}%")
+                            ->orWhere(EpisodeTranslation::overview, 'like', "%{$search}%");
+                    });
                 });
             })
             ->recordActions([

@@ -11,7 +11,9 @@ use App\Models\Episode;
 use App\Models\Language;
 use App\Models\Series;
 use App\Models\TheTvDB\EpisodeData;
+use App\Models\TheTvDB\EpisodeTranslation;
 use App\Models\TheTvDB\SeriesData;
+use App\Models\TheTvDB\SeriesTranslation;
 
 class ImportDataService
 {
@@ -39,13 +41,25 @@ class ImportDataService
         $translations = $this->seriesApi->getSeriesTranslations($series->theTvDbId);
 
         $rawData = array_merge($data, [
-            SeriesData::translations => $translations,
             SeriesData::status => $data[SeriesData::status]['name'] ?? null,
         ]);
 
-        return SeriesData::query()->updateOrCreate([
+        /** @var SeriesData $seriesData */
+        $seriesData = SeriesData::query()->updateOrCreate([
             SeriesData::series_id => $series->id,
         ], $this->filterResponseData($rawData));
+
+        // translations
+        $seriesData->translations()->delete();
+        foreach ($translations as $lang => $translation) {
+            $seriesData->translations()->create([
+                SeriesTranslation::lang => $lang ?? null,
+                SeriesTranslation::name => $translation['name'] ?? null,
+                SeriesTranslation::overview => $translation['overview'] ?? null,
+            ]);
+        }
+
+        return $seriesData;
     }
 
     /**
@@ -81,11 +95,21 @@ class ImportDataService
         $data = $this->episodesApi->getEpisodeBase($episode->theTvDbId)->getData();
         $translations = $this->episodesApi->getEpisodeTranslations($episode->theTvDbId);
 
-        return EpisodeData::query()->updateOrCreate([
+        $episodeData = EpisodeData::query()->updateOrCreate([
             EpisodeData::belongs_to_episode => $episode->id,
-        ], array_merge($data, [
-            EpisodeData::translations => $translations,
-        ]));
+        ], $data);
+
+        // translations
+        $episodeData->translations()->delete();
+        foreach ($translations as $lang => $translation) {
+            $episodeData->translations()->create([
+                EpisodeTranslation::lang => $lang ?? null,
+                EpisodeTranslation::name => $translation['name'] ?? null,
+                EpisodeTranslation::overview => $translation['overview'] ?? null,
+            ]);
+        }
+
+        return $episodeData;
     }
 
     /**

@@ -33,11 +33,6 @@ class EpisodeResource extends Resource
         return EpisodeForm::configure($schema);
     }
 
-    public static function infolist(Schema $schema): Schema
-    {
-        return EpisodeInfolist::configure($schema);
-    }
-
     public static function table(Table $table): Table
     {
         return EpisodesTable::configure($table);

@@ -7,70 +7,68 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- *
  * @property int $id
- * @property string $series_id
- * @property null|array $translations
- * @property null|string name
- * @property null|string overview
- * @property null|string slug
- * @property null|string image
- * @property null|Carbon firstAired
- * @property null|Carbon lastAired
- * @property null|Carbon nextAired
- * @property null|int score
- * @property null|string status
- * @property null|string originalCountry
- * @property null|string originalLanguage
- * @property null|int defaultSeasonType
- * @property null|bool isOrderRandomized
- * @property null|Carbon lastUpdated
- * @property null|int averageRuntime
- * @property null|int year
- * @property Series $series
- **/
+ * @property int $series_id
+ * @property string|null $slug
+ * @property string|null $image
+ * @property Carbon|null $firstAired
+ * @property Carbon|null $lastAired
+ * @property Carbon|null $nextAired
+ * @property float|null $score
+ * @property string|null $status
+ * @property string|null $originalCountry
+ * @property string|null $originalLanguage
+ * @property string|null $defaultSeasonType
+ * @property bool|null $isOrderRandomized
+ * @property Carbon|null $lastUpdated
+ * @property int|null $averageRuntime
+ * @property int|null $year
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ *
+ * @property Series series
+ * @property SeriesTranslation[] translations
+ * @method static SeriesData create(array $attributes = [])
+ */
 class SeriesData extends Model
 {
     use HasTimestamps;
     use TranslatableTrait;
 
-    const TABLE = 'series_data';
+    const string TABLE = 'series_data';
 
     // properties
-    const id = 'id';
-    const created_at = self::CREATED_AT;
-    const updated_at = self::UPDATED_AT;
+    const string id = 'id';
+    const string created_at = self::CREATED_AT;
+    const string updated_at = self::UPDATED_AT;
 
     // the tv db properties
-    const translations = 'translations';
-    const translated_name = 'name';
-    const overview = 'overview';
-    const slug = 'slug';
-    const image = 'image';
-    const firstAired = 'firstAired';
-    const lastAired = 'lastAired';
-    const nextAired = 'nextAired';
-    const score = 'score';
-    const status = 'status';
-    const originalCountry = 'originalCountry';
-    const originalLanguage = 'originalLanguage';
-    const defaultSeasonType = 'defaultSeasonType';
-    const isOrderRandomized = 'isOrderRandomized';
-    const lastUpdated = 'lastUpdated';
-    const averageRuntime = 'averageRuntime';
-    const year = 'year';
+    const string slug = 'slug';
+    const string image = 'image';
+    const string firstAired = 'firstAired';
+    const string lastAired = 'lastAired';
+    const string nextAired = 'nextAired';
+    const string score = 'score';
+    const string status = 'status';
+    const string originalCountry = 'originalCountry';
+    const string originalLanguage = 'originalLanguage';
+    const string defaultSeasonType = 'defaultSeasonType';
+    const string isOrderRandomized = 'isOrderRandomized';
+    const string lastUpdated = 'lastUpdated';
+    const string averageRuntime = 'averageRuntime';
+    const string year = 'year';
 
     // relations
-    const series_id = 'series_id';
-    const belongs_to_series = 'series';
+    const string series_id = 'series_id';
+    const string belongs_to_series = 'series';
 
     protected $table = self::TABLE;
 
     protected $fillable = [
         self::series_id,
-        self::translations,
         self::slug,
         self::image,
         self::firstAired,
@@ -87,12 +85,13 @@ class SeriesData extends Model
         self::year,
     ];
 
-    protected $casts = [
-        self::translations => 'array',
-    ];
-
     public function series(): BelongsTo
     {
         return $this->belongsTo(Series::class);
+    }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(SeriesTranslation::class);
     }
 }

@@ -33,11 +33,6 @@ class SeriesResource extends Resource
         return SeriesForm::configure($schema);
     }
 
-    public static function infolist(Schema $schema): Schema
-    {
-        return SeriesInfolist::configure($schema);
-    }
-
     public static function table(Table $table): Table
     {
         return SeriesTable::configure($table);

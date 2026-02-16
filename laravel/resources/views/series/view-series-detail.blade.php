@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="series-info">
-                    <h1 class="series-title">{{ $record->data->name ?? $record->name }}</h1>
+                    <h1 class="series-title">{{ $record->data->getName() ?? $record->name }}</h1>
 
                     <div class="series-meta">
                         @if($record->data?->year)
@@ -91,8 +91,8 @@
                         </div>
                     @endif
 
-                    @if($record->data?->overview)
-                        <p class="series-overview">{{ $record->data->overview }}</p>
+                    @if($record->data?->getOverview())
+                        <p class="series-overview">{{ $record->data->getOverview() }}</p>
                     @endif
 
                     <div class="series-dates">
@@ -229,15 +229,15 @@
                                         <div class="episode-thumbnail">
                                             <a href="{{ \App\Filament\Resources\Episodes\EpisodeResource::getUrl('view', ['record' => $episode->id]) }}">
                                                 <img src="{{ $episode->data->image }}"
-                                                     alt="{{ $episode->data->name ?? 'Episode ' . $episode->number }}">
+                                                     alt="{{ $episode->data->getName() ?? 'Episode ' . $episode->number }}">
                                                 <div class="thumbnail-overlay"></div>
                                             </a>
                                         </div>
                                     @endif
 
                                     <div class="episode-info">
-                                        @if($episode->data?->name)
-                                            <h4 class="episode-title">{{ $episode->data->name }}</h4>
+                                        @if($episode->data?->getName())
+                                            <h4 class="episode-title">{{ $episode->data->getName() }}</h4>
                                         @else
                                             <h4 class="episode-title">Episode {{ $episode->number }}</h4>
                                         @endif
@@ -262,8 +262,8 @@
                                             @endif
                                         </div>
 
-                                        @if($episode->data?->overview)
-                                            <p class="episode-overview">{{ $episode->data->overview }}</p>
+                                        @if($episode->data?->getOverview())
+                                            <p class="episode-overview">{{ $episode->data->getOverview() }}</p>
                                         @endif
 
                                         @if($episode->notes)
