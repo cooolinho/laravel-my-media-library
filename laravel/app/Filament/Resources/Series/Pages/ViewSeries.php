@@ -28,6 +28,19 @@ class ViewSeries extends ViewRecord
     protected string $view = 'series.view-series-detail';
     protected ?string $heading = '';
 
+    protected function getViewData(): array
+    {
+        return [
+            'record' => $this->record,
+            'artworksByType' => $this->getArtworksByType(),
+        ];
+    }
+
+    protected function getArtworksByType()
+    {
+        return $this->record->artworks->groupBy(Artwork::type)->sortKeys();
+    }
+
     protected function getHeaderActions(): array
     {
         return [

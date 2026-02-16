@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Series\RelationManagers;
 
+use App\Filament\Resources\Episodes\Actions\EditNotesAction;
 use App\Filament\Resources\Episodes\Actions\SetNotOwnedBulkAction;
 use App\Filament\Resources\Episodes\Actions\SetOwnedBulkAction;
 use App\Filament\Resources\Episodes\Actions\ToggleOwnedAction;
@@ -57,6 +58,7 @@ class EpisodesRelationManager extends RelationManager
             ->recordActions([
                 ActionGroup::make([
                     ToggleOwnedAction::make(),
+                    EditNotesAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
                 ])

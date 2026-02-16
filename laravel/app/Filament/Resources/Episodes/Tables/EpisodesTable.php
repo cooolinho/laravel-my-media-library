@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Episodes\Tables;
 
+use App\Filament\Resources\Episodes\Actions\EditNotesAction;
 use App\Filament\Resources\Episodes\Actions\SetNotOwnedBulkAction;
 use App\Filament\Resources\Episodes\Actions\SetOwnedBulkAction;
 use App\Filament\Resources\Episodes\Actions\ToggleOwnedAction;
@@ -68,6 +69,7 @@ class EpisodesTable
             ->recordActions([
                 ActionGroup::make([
                     ToggleOwnedAction::make(),
+                    EditNotesAction::make(),
                     ViewAction::make(),
                     EditAction::make(),
                 ])

@@ -654,6 +654,461 @@
         margin-top: 2px;
     }
 
+    // Artworks Section
+    .artworks-section {
+        padding: 0 3rem 3rem;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    .artworks-accordion-block {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+
+        &:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        &.open {
+            .accordion-icon {
+                transform: rotate(180deg);
+            }
+
+            .artworks-accordion-header {
+                border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+            }
+        }
+    }
+
+    .artworks-accordion-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 1.5rem 2rem;
+        background: rgba(15, 23, 42, 0.4);
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .artworks-title-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .artworks-title-with-icon {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            .accordion-icon {
+                width: 28px;
+                height: 28px;
+                color: #8b5cf6;
+                transition: transform 0.3s ease;
+            }
+
+            .artworks-subtitle {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #e2e8f0;
+                margin: 0;
+            }
+        }
+
+        .artworks-count {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            font-weight: 500;
+            padding: 0.4rem 1rem;
+            background: rgba(139, 92, 246, 0.15);
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+    }
+
+    .artworks-accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease;
+    }
+
+    .artworks-tabs {
+        background: transparent;
+    }
+
+    .artworks-tabs-header {
+        display: flex;
+        gap: 0.5rem;
+        padding: 1.5rem 2rem 1rem;
+        background: transparent;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(139, 92, 246, 0.5) rgba(0, 0, 0, 0.2);
+
+        &::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.5);
+            border-radius: 3px;
+
+            &:hover {
+                background: rgba(139, 92, 246, 0.7);
+            }
+        }
+    }
+
+    .artworks-tab-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: rgba(30, 41, 59, 0.5);
+        border: 2px solid rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        color: #94a3b8;
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+        flex-shrink: 0;
+
+        &:hover {
+            background: rgba(51, 65, 85, 0.7);
+            border-color: rgba(139, 92, 246, 0.3);
+            color: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        &.active {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border-color: #8b5cf6;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .tab-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .artwork-count-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 24px;
+            height: 24px;
+            padding: 0 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+    }
+
+    .artworks-tabs-content {
+        padding: 1.5rem 2rem 2rem;
+        min-height: auto;
+    }
+
+    .artworks-tab-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .artworks-layout-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.5rem;
+        background: rgba(15, 23, 42, 0.5);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        font-size: 0.95rem;
+        color: #cbd5e1;
+        margin-bottom: 0.5rem;
+
+        .info-icon {
+            width: 20px;
+            height: 20px;
+            color: #8b5cf6;
+            flex-shrink: 0;
+        }
+
+        span {
+            font-weight: 600;
+        }
+    }
+
+    // Grid-Layout Styles (für Poster, ClearArt, ClearLogo)
+    .artworks-grid {
+        display: grid;
+        gap: 1.5rem;
+
+        // Poster: maximal 3 Spalten (2:3 Aspect Ratio)
+        &.artwork-grid-columns-3 {
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+
+            @media (min-width: 768px) {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                max-width: 100%;
+
+                .artwork-item {
+                    // Maximal 3 Spalten
+                    &:nth-child(n+4) {
+                        grid-column: auto;
+                    }
+                }
+            }
+
+            @media (min-width: 1200px) {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        // ClearLogo: maximal 4 Spalten
+        &.artwork-grid-columns-4 {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+
+            @media (min-width: 1200px) {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    }
+
+    .artwork-item {
+        background: linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(30, 41, 59, 0.6) 100%);
+        border: 2px solid rgba(148, 163, 184, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.4);
+            border-color: rgba(139, 92, 246, 0.3);
+
+            .artwork-overlay {
+                opacity: 1;
+            }
+        }
+    }
+
+    .artwork-image-container {
+        position: relative;
+        width: 100%;
+        background: rgba(51, 65, 85, 0.6);
+        overflow: hidden;
+        height: 0; // Height wird durch padding-bottom definiert
+        // padding-bottom wird inline gesetzt basierend auf Typ
+    }
+
+    .artwork-thumbnail {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+
+        .artwork-item:hover & {
+            transform: scale(1.1);
+        }
+
+        // Für ClearLogos (transparente Bilder)
+        .artwork-type-clearlogo & {
+            object-fit: contain;
+            padding: 1rem;
+        }
+    }
+
+    .artwork-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.3) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .artwork-view-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        transition: all 0.3s ease;
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.6);
+        }
+    }
+
+    .artwork-info {
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .artwork-id {
+        font-size: 0.875rem;
+        color: #94a3b8;
+        font-weight: 500;
+    }
+
+    // Stack-Layout Styles (für Banner und Backgrounds - untereinander)
+    .artworks-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    .artwork-item-stack {
+        background: linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(30, 41, 59, 0.6) 100%);
+        border: 2px solid rgba(148, 163, 184, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        width: 100%;
+        height: auto;
+
+        &:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.4);
+
+            .artwork-overlay-stack {
+                opacity: 1;
+            }
+        }
+    }
+
+    .artwork-image-container-stack {
+        position: relative;
+        width: 100%;
+        background: rgba(51, 65, 85, 0.6);
+        overflow: hidden;
+        height: 0; // Height wird durch padding-bottom definiert
+        // padding-bottom wird inline gesetzt basierend auf Typ
+    }
+
+    .artwork-thumbnail-stack {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+
+        .artwork-item-stack:hover & {
+            transform: scale(1.05);
+        }
+    }
+
+    .artwork-overlay-stack {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to right, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.7) 50%, transparent 100%);
+        display: flex;
+        align-items: center;
+        padding: 2rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .artwork-stack-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        max-width: 400px;
+    }
+
+    .artwork-stack-id {
+        font-size: 0.875rem;
+        color: #cbd5e1;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 6px;
+        display: inline-block;
+        width: fit-content;
+    }
+
+    .artwork-view-button-stack {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        transition: all 0.3s ease;
+        width: fit-content;
+
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        &:hover {
+            transform: translateX(4px);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.6);
+        }
+    }
+
     // Warez Links Section
     .warez-links-section {
         padding: 0 3rem 3rem;
@@ -941,6 +1396,71 @@
 
         .warez-links-section {
             padding: 0 1rem 2rem;
+        }
+
+        .artworks-section {
+            padding: 0 1rem 2rem;
+        }
+
+        .artworks-accordion-header {
+            padding: 1rem 1.25rem;
+
+            .artworks-title-with-icon {
+                gap: 0.5rem;
+
+                .accordion-icon {
+                    width: 24px;
+                    height: 24px;
+                }
+
+                .artworks-subtitle {
+                    font-size: 1.1rem;
+                }
+            }
+
+            .artworks-count {
+                font-size: 0.85rem;
+                padding: 0.3rem 0.75rem;
+            }
+        }
+
+        .artworks-tabs-header {
+            padding: 1rem 1.25rem 0.75rem;
+            gap: 0.4rem;
+        }
+
+        .artworks-tab-button {
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .artworks-tabs-content {
+            padding: 1rem 1.25rem 1.5rem;
+        }
+
+        .artworks-grid {
+            // Auf Mobile immer single column für Grid-Layouts
+            &.artwork-grid-columns-3,
+            &.artwork-grid-columns-4 {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        .artworks-stack {
+            gap: 1.5rem;
+        }
+
+        .artwork-overlay-stack {
+            padding: 1rem;
+        }
+
+        .artwork-stack-info {
+            max-width: 100%;
+        }
+
+        .artwork-view-button-stack {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
         }
 
         .warez-accordion-header {

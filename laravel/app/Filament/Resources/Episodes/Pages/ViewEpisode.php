@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Episodes\Pages;
 
+use App\Filament\Resources\Episodes\Actions\EditNotesAction;
+use App\Filament\Resources\Episodes\Actions\ToggleOwnedAction;
 use App\Filament\Resources\Episodes\EpisodeResource;
 use App\Jobs\EpisodeDataJob;
 use App\Models\Episode;
@@ -42,10 +44,12 @@ class ViewEpisode extends ViewRecord
     {
         return [
             ActionGroup::make([
+                ToggleOwnedAction::make(),
+                EditNotesAction::make(),
                 EditAction::make(),
                 Action::make('loadEpisodeData')
                     ->requiresConfirmation()
-                    ->action(fn(Episode $episode) => EpisodeDataJob::dispatch($episode))
+                    ->action(fn(Episode $episode) => EpisodeDataJob::dispatch($episode)),
             ])
                 ->button()
                 ->label('Aktionen')
