@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\WarezLinks\Schemas;
 
 use App\Models\WarezLink;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -13,9 +14,21 @@ class WarezLinkForm
         return $schema
             ->components([
                 TextInput::make(WarezLink::title)
+                    ->label('Titel')
+                    ->required()
                     ->columnSpanFull(),
                 TextInput::make(WarezLink::url)
-                    ->helperText('pls put a placeholder <SERIES_NAME> here to replace this')
+                    ->label('URL')
+                    ->helperText('Verwenden Sie Platzhalter wie <SERIES_NAME> oder <TVDB_ID> in der URL')
+                    ->required()
+                    ->url()
+                    ->columnSpanFull(),
+                Select::make(WarezLink::placeholderType)
+                    ->label('Platzhalter-Typ')
+                    ->options(WarezLink::getPlaceholderTypes())
+                    ->default(WarezLink::PLACEHOLDER_SERIES_NAME)
+                    ->required()
+                    ->helperText('Wählen Sie, welcher Platzhalter in der URL ersetzt werden soll')
                     ->columnSpanFull(),
             ]);
     }

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('url');
+            $table->string('placeholder_type')->default('series_name'); // 'series_name' or 'tvdb_id'
             $table->timestamps();
         });
     }

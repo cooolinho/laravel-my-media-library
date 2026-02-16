@@ -22,11 +22,12 @@
 
     <div class="p-4">
         <div x-show="activeTab === 'tab0'" x-cloak>
-            <iframe src="https://thetvdb.com/series/{{ $series->data?->slug ?? $series->name }}" frameborder="0" width="100%" height="500px"></iframe>
+            <iframe src="https://thetvdb.com/series/{{ $series->data?->slug ?? $series->name }}"
+                    class="w-full h-[500px] border-0"></iframe>
         </div>
         @foreach($links as $key => $link)
             <div x-show="activeTab === 'tab{{ $key + 1 }}'" x-cloak>
-                <iframe src="{{ $link->getIframeUrl($series->name) }}" frameborder="0" width="100%" height="500px"></iframe>
+                <iframe src="{{ $link->getIframeUrl($series) }}" class="w-full h-[500px] border-0"></iframe>
             </div>
         @endforeach
     </div>
