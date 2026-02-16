@@ -18,7 +18,7 @@ class SeriesInfolist
                     ->label('Preview')
                     ->imageHeight('300px')
                     ->columnSpanFull(),
-                TextEntry::make(Series::has_one_data . '.' . SeriesData::name)
+                TextEntry::make(Series::has_one_data . '.' . SeriesData::translated_name)
                     ->label('Name'),
                 TextEntry::make(Series::has_one_data . '.' . SeriesData::year)
                     ->label('Year'),

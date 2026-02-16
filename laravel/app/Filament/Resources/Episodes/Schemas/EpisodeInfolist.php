@@ -19,7 +19,7 @@ class EpisodeInfolist
                     ->label('Preview')
                     ->imageHeight('300px')
                     ->columnSpanFull(),
-                TextEntry::make(Episode::has_one_data . '.' . EpisodeData::name)
+                TextEntry::make(Episode::has_one_data . '.' . EpisodeData::translated_name)
                     ->label('Name'),
                 IconEntry::make(Episode::owned)
                     ->boolean()

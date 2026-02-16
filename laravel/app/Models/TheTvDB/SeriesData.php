@@ -45,7 +45,7 @@ class SeriesData extends Model
 
     // the tv db properties
     const translations = 'translations';
-    const name = 'name';
+    const translated_name = 'name';
     const overview = 'overview';
     const slug = 'slug';
     const image = 'image';

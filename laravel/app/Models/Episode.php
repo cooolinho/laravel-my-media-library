@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $theTvDbId
  * @property int $series_id
  * @property int $episode_data_id
+ * @property string|null $notes
  * @property Series $series
  * @property EpisodeData $data
  */
@@ -30,6 +31,7 @@ class Episode extends Model
     const seasonNumber = 'seasonNumber';
     const owned = 'owned';
     const theTvDbId = 'theTvDbId';
+    const notes = 'notes';
 
     // relations
     const series_id = 'series_id';
@@ -43,6 +45,7 @@ class Episode extends Model
         self::owned,
         self::theTvDbId,
         self::series_id,
+        self::notes,
     ];
 
     public function series(): BelongsTo

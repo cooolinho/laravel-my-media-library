@@ -25,7 +25,7 @@ class EpisodeData extends Model
 
     // tv db
     const translations = 'translations';
-    const name = 'name';
+    const translated_name = 'name';
     const overview = 'overview';
     const aired = 'aired';
     const runtime = 'runtime';

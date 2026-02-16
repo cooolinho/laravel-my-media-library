@@ -4,9 +4,6 @@ namespace App\Filament\Resources\Series\Pages;
 
 use App\Config\FilesystemEnum;
 use App\Filament\Resources\Series\SeriesResource;
-use App\Filament\Resources\Series\Widgets\SeriesArtworksWidget;
-use App\Filament\Resources\Series\Widgets\SeriesStatsWidget;
-use App\Filament\Resources\Series\Widgets\WarezLinkWidget;
 use App\Jobs\SeriesArtworkJob;
 use App\Jobs\SeriesDataJob;
 use App\Jobs\SeriesEpisodesJob;
@@ -14,46 +11,61 @@ use App\Jobs\SyncEpisodesOwnedFromFileJob;
 use App\Models\Artwork;
 use App\Models\Series;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use ZipArchive;
 
 class ViewSeries extends ViewRecord
 {
+    public Model|Series|int|string|null $record;
     protected static string $resource = SeriesResource::class;
+    protected string $view = 'series.view-series-detail';
+    protected ?string $heading = '';
 
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make(),
-            Action::make('uploadFile')
-                ->label('Datei zum Abgleich hochladen')
-                ->modalContent(view('series.components.upload-file'))
-                ->schema([
-                    FileUpload::make('file')
-                        ->label('Wählen Sie eine Datei aus')
-                        ->required()
-                        ->acceptedFileTypes(['text/*'])
-                        ->disk(FilesystemEnum::DISK_PUBLIC->value)
-                ])
-                ->action(function (array $data) {
-                    $this->processFile($data['file']);
-                }),
-            Action::make('loadSeriesData')
-                ->requiresConfirmation()
-                ->action(fn (Series $series) => SeriesDataJob::dispatch($series)),
-            Action::make('loadSeriesEpisodesData')
-                ->requiresConfirmation()
-                ->action(fn (Series $series) => SeriesEpisodesJob::dispatch($series)),
-            Action::make('loadSeriesArtworks')
-                ->requiresConfirmation()
-                ->action(fn (Series $series) => SeriesArtworkJob::dispatch($series)),
-            Action::make('loadArtworksAsZip')
-                ->requiresConfirmation()
-                ->action(fn (Series $series) => $this->downloadArtworks($series)),
+            ActionGroup::make([
+                EditAction::make(),
+                Action::make('uploadFile')
+                    ->label('Datei zum Abgleich hochladen')
+                    ->modalContent(view('series.components.upload-file'))
+                    ->schema([
+                        FileUpload::make('file')
+                            ->label('Wählen Sie eine Datei aus')
+                            ->required()
+                            ->acceptedFileTypes(['text/*'])
+                            ->disk(FilesystemEnum::DISK_PUBLIC->value)
+                    ])
+                    ->action(function (array $data) {
+                        $this->processFile($data['file']);
+                    })
+                    ->after(function () {
+                        sleep(5); // Kurze Verzögerung, um sicherzustellen, dass der Job gestartet ist
+                        $this->redirect(SeriesResource::getUrl('view', ['record' => $this->record]));
+                    }),
+                Action::make('loadSeriesData')
+                    ->requiresConfirmation()
+                    ->action(fn(Series $series) => SeriesDataJob::dispatch($series)),
+                Action::make('loadSeriesEpisodesData')
+                    ->requiresConfirmation()
+                    ->action(fn(Series $series) => SeriesEpisodesJob::dispatch($series)),
+                Action::make('loadSeriesArtworks')
+                    ->requiresConfirmation()
+                    ->action(fn(Series $series) => SeriesArtworkJob::dispatch($series)),
+                Action::make('loadArtworksAsZip')
+                    ->requiresConfirmation()
+                    ->action(fn(Series $series) => $this->downloadArtworks($series)),
+            ])
+                ->button()
+                ->label('Aktionen')
+                ->icon(Heroicon::Cog)
         ];
     }
 
@@ -64,21 +76,6 @@ class ViewSeries extends ViewRecord
             $this->record,
             Storage::disk(FilesystemEnum::DISK_PUBLIC->value)->path($fileName)
         );
-    }
-
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            SeriesStatsWidget::class,
-        ];
-    }
-
-    protected function getFooterWidgets(): array
-    {
-        return [
-            SeriesArtworksWidget::class,
-            WarezLinkWidget::class,
-        ];
     }
 
     public function downloadArtworks(Series $series): BinaryFileResponse

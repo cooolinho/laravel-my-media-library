@@ -1,0 +1,668 @@
+// View Series - Modernes Design
+.fi-page-content > .view-episode-container {
+    margin-top: 0;
+}
+
+// View Episode - Modernes Design
+.view-episode-container {
+    background: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 100%);
+    min-height: 100vh;
+    padding: 0;
+    margin: -2rem -2rem 0;
+    color: #e2e8f0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    // Episode Hero Section
+    .episode-hero {
+        position: relative;
+        min-height: 500px;
+        margin-bottom: 3rem;
+        overflow: hidden;
+    }
+
+    .episode-hero-backdrop {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+
+        .backdrop-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(25px) brightness(0.3);
+            transform: scale(1.1);
+        }
+
+        .backdrop-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom,
+                    rgba(10, 14, 26, 0.6) 0%,
+                    rgba(10, 14, 26, 0.95) 70%,
+                    rgba(10, 14, 26, 1) 100%);
+        }
+    }
+
+    .episode-hero-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        gap: 3rem;
+        padding: 3rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    // Episode Thumbnail
+    .episode-thumbnail-large {
+        position: relative;
+        flex-shrink: 0;
+        width: 420px;
+        height: 280px;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+
+            &:hover {
+                transform: scale(1.05);
+            }
+        }
+
+        .thumbnail-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            gap: 1rem;
+
+            svg {
+                width: 80px;
+                height: 80px;
+            }
+
+            .episode-identifier {
+                font-size: 2rem;
+                font-weight: 800;
+                color: #64748b;
+            }
+        }
+    }
+
+    .owned-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.875rem;
+        box-shadow: 0 8px 16px -4px rgba(16, 185, 129, 0.4);
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    // Episode Main Info
+    .episode-main-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    // Breadcrumb
+    .series-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+    .series-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #3b82f6;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        background: rgba(59, 130, 246, 0.1);
+        border-radius: 8px;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        transition: all 0.3s ease;
+
+        &:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateX(-2px);
+        }
+
+        .breadcrumb-icon {
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    .separator-icon {
+        width: 20px;
+        height: 20px;
+        color: #64748b;
+    }
+
+    .current-episode {
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    // Episode Title
+    .episode-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin: 0;
+        line-height: 1.1;
+        background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .episode-identifier-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(124, 58, 237, 0.2) 100%);
+        border: 2px solid rgba(139, 92, 246, 0.3);
+        border-radius: 12px;
+        width: fit-content;
+
+        .badge-label {
+            font-size: 0.875rem;
+            color: #a78bfa;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+    }
+
+    // Episode Meta Grid
+    .episode-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .meta-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.25rem;
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(51, 65, 85, 0.4) 100%);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.4);
+            border-color: rgba(148, 163, 184, 0.2);
+        }
+
+        &.owned {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%);
+            border-color: rgba(16, 185, 129, 0.3);
+
+            .meta-icon {
+                color: #10b981;
+            }
+        }
+
+        &.not-owned {
+            background: linear-gradient(135deg, rgba(100, 116, 139, 0.15) 0%, rgba(71, 85, 105, 0.1) 100%);
+            border-color: rgba(100, 116, 139, 0.2);
+
+            .meta-icon {
+                color: #64748b;
+            }
+        }
+    }
+
+    .meta-icon {
+        width: 40px;
+        height: 40px;
+        padding: 8px;
+        background: rgba(59, 130, 246, 0.1);
+        border-radius: 10px;
+        color: #3b82f6;
+        flex-shrink: 0;
+    }
+
+    .meta-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .meta-label {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .meta-value {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+    // Episode Sections
+    .episode-section {
+        padding: 0 3rem 3rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .section-icon {
+        width: 32px;
+        height: 32px;
+        color: #3b82f6;
+    }
+
+    .section-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+        color: #ffffff;
+    }
+
+    // Overview Content
+    .overview-content {
+        padding: 2rem;
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(51, 65, 85, 0.3) 100%);
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+    }
+
+    .overview-text {
+        font-size: 1.125rem;
+        line-height: 1.8;
+        color: #cbd5e1;
+        margin: 0;
+    }
+
+    // Notes Content
+    .notes-content {
+        padding: 2rem;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+        border-left: 4px solid #3b82f6;
+        border-radius: 12px;
+    }
+
+    .notes-text {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: #cbd5e1;
+        margin: 0;
+        font-style: italic;
+    }
+
+    // Series Info Card
+    .series-info-card {
+        display: flex;
+        gap: 2rem;
+        padding: 2rem;
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(51, 65, 85, 0.3) 100%);
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+
+        &:hover {
+            border-color: rgba(148, 163, 184, 0.2);
+            box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.3);
+        }
+    }
+
+    .series-poster-small {
+        flex-shrink: 0;
+        width: 150px;
+        height: 225px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.4);
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .poster-placeholder-small {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+
+            svg {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    }
+
+    .series-details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .series-name {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+        color: #ffffff;
+    }
+
+    .series-overview {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #94a3b8;
+        margin: 0;
+    }
+
+    .series-meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .series-meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        border-radius: 8px;
+        font-size: 0.875rem;
+        color: #cbd5e1;
+    }
+
+    .series-meta-icon {
+        width: 16px;
+        height: 16px;
+        color: #94a3b8;
+    }
+
+    .status-badge-small {
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+
+        &.status-ended {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: #ffffff;
+            border-color: rgba(220, 38, 38, 0.3);
+        }
+
+        &.status-continuing {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+    }
+
+    .series-view-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.875rem 1.5rem;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        border-radius: 10px;
+        color: #ffffff;
+        font-weight: 600;
+        text-decoration: none;
+        width: fit-content;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px -2px rgba(59, 130, 246, 0.4);
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -4px rgba(59, 130, 246, 0.6);
+        }
+    }
+
+    // Related Episodes Grid
+    .related-episodes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .related-episode-card {
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(135deg, rgba(51, 65, 85, 0.4) 0%, rgba(30, 41, 59, 0.6) 100%);
+        border: 2px solid rgba(148, 163, 184, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        text-decoration: none;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.4);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+    }
+
+    .related-episode-thumbnail {
+        position: relative;
+        width: 100%;
+        height: 160px;
+        background: rgba(51, 65, 85, 0.6);
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .owned-indicator {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 50%;
+            box-shadow: 0 4px 8px -2px rgba(16, 185, 129, 0.4);
+
+            svg {
+                width: 18px;
+                height: 18px;
+                color: #ffffff;
+            }
+        }
+    }
+
+    .related-episode-card:hover .related-episode-thumbnail img {
+        transform: scale(1.1);
+    }
+
+    .related-episode-info {
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .related-episode-number {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #3b82f6;
+        background: rgba(59, 130, 246, 0.1);
+        padding: 0.375rem 0.75rem;
+        border-radius: 6px;
+        width: fit-content;
+    }
+
+    .related-episode-title {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+        color: #ffffff;
+        line-height: 1.4;
+    }
+
+    .related-episode-date {
+        font-size: 0.875rem;
+        color: #94a3b8;
+    }
+
+    // Responsive Design
+    @media (max-width: 1200px) {
+        .episode-hero-content {
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .episode-thumbnail-large {
+            width: 350px;
+            height: 233px;
+        }
+
+        .episode-title {
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        margin: -1rem -1rem 0;
+
+        .episode-hero {
+            min-height: auto;
+        }
+
+        .episode-hero-content {
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .episode-thumbnail-large {
+            width: 100%;
+            max-width: 420px;
+            height: 280px;
+        }
+
+        .episode-main-info {
+            width: 100%;
+            text-align: center;
+            align-items: center;
+        }
+
+        .episode-title {
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .episode-meta-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+
+        .episode-section {
+            padding: 0 1rem 2rem;
+        }
+
+        .series-breadcrumb {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .series-info-card {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .series-details {
+            text-align: center;
+            align-items: center;
+        }
+
+        .series-meta-row {
+            justify-content: center;
+        }
+
+        .related-episodes-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .episode-title {
+            font-size: 1.75rem;
+        }
+
+        .episode-meta-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .meta-card {
+            padding: 1rem;
+        }
+    }
+}
+

@@ -2,18 +2,23 @@
 
 namespace App\Filament\Resources\Series\RelationManagers;
 
-use App\Filament\Resources\Episodes\EpisodeResource;
-use App\Filament\Resources\Episodes\Tables\EpisodesTable;
+use App\Filament\Resources\Episodes\Actions\SetNotOwnedBulkAction;
+use App\Filament\Resources\Episodes\Actions\SetOwnedBulkAction;
+use App\Filament\Resources\Episodes\Actions\ToggleOwnedAction;
+use App\Filament\Resources\Episodes\Schemas\EpisodeForm;
+use App\Filament\Resources\Episodes\Tables\Filters\OwnedFilter;
+use App\Filament\Resources\Episodes\Tables\Filters\SeasonFilter;
 use App\Models\Episode;
 use App\Models\Series;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Checkbox;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
+use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -25,9 +30,7 @@ class EpisodesRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
-                Checkbox::make(Episode::owned),
-            ]);
+            ->schema(EpisodeForm::getComponents(false));
     }
 
     public function table(Table $table): Table
@@ -43,22 +46,32 @@ class EpisodesRelationManager extends RelationManager
                     ->boolean(),
             ])
             ->filters([
-                EpisodesTable::getOwnedFilter(),
+                OwnedFilter::make(),
+                SeasonFilter::make($this->getSeriesId()),
             ])
             ->headerActions([
                 //
             ])
             ->recordActions([
-                EditAction::make(),
-                ViewAction::make()
-                    ->url(fn($record) => EpisodeResource::getUrl('view', ['record' => $record->id]))
-                    ->openUrlInNewTab(true),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    ToggleOwnedAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])
+                    ->color(Color::Indigo)
+                    ->icon(Heroicon::ListBullet)
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    SetOwnedBulkAction::make(),
+                    SetNotOwnedBulkAction::make(),
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public function getSeriesId(): int
+    {
+        return $this->getOwnerRecord()->getAttribute(Series::id);
     }
 }

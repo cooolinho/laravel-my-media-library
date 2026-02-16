@@ -7,13 +7,14 @@ use Filament\Tables\Filters\SelectFilter;
 
 class SeasonFilter
 {
-    public static function make(): SelectFilter
+    public static function make(int $seriesId = null): SelectFilter
     {
         return SelectFilter::make(Episode::seasonNumber)
             ->label('Staffel')
             ->placeholder('Alle Staffeln')
-            ->options(function () {
+            ->options(function () use ($seriesId) {
                 return Episode::query()
+                    ->when($seriesId, fn($query) => $query->where(Episode::series_id, $seriesId))
                     ->distinct()
                     ->orderBy(Episode::seasonNumber)
                     ->pluck(Episode::seasonNumber, Episode::seasonNumber)

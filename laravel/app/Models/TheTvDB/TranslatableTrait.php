@@ -34,7 +34,7 @@ trait TranslatableTrait
 
     public function getNameTranslationAttribute(): string
     {
-        return $this->getTranslationProperty(static::name);
+        return $this->getTranslationProperty(static::translated_name);
     }
 
     public function getOverviewTranslationAttribute(): string

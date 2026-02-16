@@ -3,7 +3,11 @@
 /* Components */
 @import "components/_gallery.scss";
 @import "components/_search.scss";
-@import "components/_series.scss";
+
+/* Pages */
+@import "pages/_listSeries.scss";
+@import "pages/_viewSeries.scss";
+@import "pages/_viewEpisode.scss";
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
