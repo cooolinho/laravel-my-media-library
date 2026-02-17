@@ -19,9 +19,8 @@ class WarezLinkForm
                     ->columnSpanFull(),
                 TextInput::make(WarezLink::url)
                     ->label('URL')
-                    ->helperText('Verwenden Sie Platzhalter wie <SERIES_NAME> oder <TVDB_ID> in der URL')
+                    ->helperText('Verwenden Sie Platzhalter <PLACEHOLDER> in der URL')
                     ->required()
-                    ->url()
                     ->columnSpanFull(),
                 Select::make(WarezLink::placeholderType)
                     ->label('Platzhalter-Typ')

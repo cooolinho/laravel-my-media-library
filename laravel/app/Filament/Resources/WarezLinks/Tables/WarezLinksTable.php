@@ -29,6 +29,7 @@ class WarezLinksTable
                     ->color(fn(string $state): string => match ($state) {
                         WarezLink::PLACEHOLDER_SERIES_NAME => 'success',
                         WarezLink::PLACEHOLDER_TVDB_ID => 'info',
+                        WarezLink::PLACEHOLDER_SERIES_SLUG => 'warning',
                         default => 'gray',
                     }),
                 TextColumn::make('created_at')

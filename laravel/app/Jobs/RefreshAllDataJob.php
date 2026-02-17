@@ -26,28 +26,16 @@ class RefreshAllDataJob extends Job implements ShouldQueue
         $this->logStart(null, 'Starte Aktualisierung aller Serien und Episoden', []);
 
         try {
-            $seriesCount = Series::query()->count();
-            $episodesCount = Episode::query()->count();
+            $totalSeries = Series::query()->count();
+            $totalEpisodes = Episode::query()->count();
 
-            Log::info("RefreshAllDataJob: Starte Jobs für {$seriesCount} Serien und {$episodesCount} Episoden");
+            Log::info("RefreshAllDataJob: Starte Jobs für {$totalSeries} Serien und {$totalEpisodes} Episoden");
 
-            // Dispatch SeriesDataJob für alle Serien
-            Series::query()
-                ->chunk(100, function ($series) {
-                    foreach ($series as $singleSeries) {
-                        SeriesDataJob::dispatch($singleSeries);
-                    }
-                });
+            // Starte die spezialisierten Jobs
+            RefreshAllSeriesJob::dispatch();
+            RefreshAllEpisodesJob::dispatch();
 
-            // Dispatch EpisodeDataJob für alle Episoden
-            Episode::query()
-                ->chunk(100, function ($episodes) {
-                    foreach ($episodes as $episode) {
-                        EpisodeDataJob::dispatch($episode);
-                    }
-                });
-
-            $this->logSuccess("Erfolgreich Jobs für {$seriesCount} Serien und {$episodesCount} Episoden gestartet");
+            $this->logSuccess("Erfolgreich Jobs für {$totalSeries} Serien und {$totalEpisodes} Episoden initiiert");
         } catch (Throwable $e) {
             $this->logFailure($e);
             throw $e;

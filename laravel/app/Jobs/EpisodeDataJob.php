@@ -7,7 +7,6 @@ use App\Jobs\Concerns\LogsJobActivity;
 use App\Models\Episode;
 use App\Models\Job as JobModel;
 use App\Services\ImportDataService;
-use App\Settings\JobSettings;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Queue\Queueable;
@@ -25,7 +24,7 @@ class EpisodeDataJob extends Job implements ShouldQueue
         $this->episode = $episode;
     }
 
-    public function handle(JobSettings $settings, ImportDataService $service): void
+    public function handle(ImportDataService $service): void
     {
         $this->logStart($this->episode, 'Aktualisiere Episode: ' . $this->episode->getIdentifier(), [
             'episode_id' => $this->episode->id,

@@ -21,25 +21,23 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class JobLog extends Model
 {
-    const UPDATED_AT = null;
-
-    const id = 'id';
-    const job_class = 'job_class';
-    const status = 'status';
-    const message = 'message';
-    const context = 'context';
-    const exception = 'exception';
-    const loggable_type = 'loggable_type';
-    const loggable_id = 'loggable_id';
-    const created_at = 'created_at';
-    const finished_at = 'finished_at';
-    const duration_seconds = 'duration_seconds';
+    const string id = 'id';
+    const string job_class = 'job_class';
+    const string status = 'status';
+    const string message = 'message';
+    const string context = 'context';
+    const string exception = 'exception';
+    const string loggable_type = 'loggable_type';
+    const string loggable_id = 'loggable_id';
+    const string created_at = 'created_at';
+    const string finished_at = 'finished_at';
+    const string duration_seconds = 'duration_seconds';
 
     // Status constants
-    const STATUS_STARTED = 'started';
-    const STATUS_SUCCESS = 'success';
-    const STATUS_FAILED = 'failed';
-    const STATUS_SKIPPED = 'skipped';
+    const string STATUS_STARTED = 'started';
+    const string STATUS_SUCCESS = 'success';
+    const string STATUS_FAILED = 'failed';
+    const string STATUS_SKIPPED = 'skipped';
 
     protected $fillable = [
         self::job_class,

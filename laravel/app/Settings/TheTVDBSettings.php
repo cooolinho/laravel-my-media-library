@@ -5,6 +5,7 @@ namespace App\Settings;
 use App\Jobs\UpdatesJob;
 use App\Models\Language;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Spatie\LaravelSettings\Settings;
 
@@ -16,6 +17,7 @@ class TheTVDBSettings extends Settings implements FormSchemaInterface
     public string $languageDefault = self::LANGUAGE_FALLBACK;
     public int $updatesSinceXDays = 1;
     public bool $autoUpdates = true;
+    public int $apiCacheDuration = 60; // Cache-Dauer in Minuten
 
     const string autoUpdates = 'autoUpdates';
 
@@ -46,8 +48,16 @@ class TheTVDBSettings extends Settings implements FormSchemaInterface
                 ->helperText('Beim Anzeigen von Serien oder Episoden Daten wird diese Sprache bevorzugt angezeigt. Wenn die Daten in dieser Sprache nicht verfügbar sind, wird auf die anderen ausgewählten Sprachen zurückgegriffen.'),
             Select::make('updatesSinceXDays')
                 ->options(array_combine($days, $days))
-                ->helperText('Gibt an, wie viele Tage zurück die Suche nach Updates für Serien- und Episodendaten gehen soll. Der availableAt Zeitpunkt beim Job UpdatesJob wird entsprechend angepasst, um nur Updates zu berücksichtigen, die seit diesem Zeitpunkt verfügbar sind.')
+                ->helperText('Gibt an, wie viele Tage zurück die Suche nach Updates für Serien- und Episodendaten gehen soll. Der availableAt Zeitpunkt beim Job UpdatesJob wird entsprechend angepasst, um nur Updates zu berücksichtigen, die seit diesem Zeitpunkt verfügbar sind. Es werden nur die Serien berücksichtigt die in aktuell noch Laufend sind, also kein Ended oder Canceled Status haben.')
                 ->label('Updates für die letzten X Tage suchen'),
+            TextInput::make('apiCacheDuration')
+                ->numeric()
+                ->minValue(0)
+                ->maxValue(60 * 24 * 14)
+                ->default(60)
+                ->suffix('Minuten')
+                ->helperText('Dauer in Minuten, wie lange API-Antworten im Cache gespeichert werden. 0 deaktiviert den Cache. Maximalwert ist 20160 (14 Tage).')
+                ->label('API Cache Dauer'),
             Toggle::make(self::autoUpdates)
                 ->helperText('Wenn aktiviert wird der UpdatesJob automatisch nach beendeter Ausführung erneut gestartet, um kontinuierlich nach Updates zu suchen.')
                 ->label('Automatische Updates'),

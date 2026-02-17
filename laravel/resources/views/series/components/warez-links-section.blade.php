@@ -31,20 +31,9 @@
             </button>
 
             <div class="warez-accordion-content">
-                <div class="warez-tabs" x-data="{ activeTab: 'tvdb' }">
+                <div class="warez-tabs" x-data="{ activeTab: 'link-{{ $warezLinks->first()->id }}' }">
                     {{-- Tab Headers --}}
                     <div class="warez-tabs-header">
-                        <button
-                                @click="activeTab = 'tvdb'"
-                                :class="{ 'active': activeTab === 'tvdb' }"
-                                class="warez-tab-button"
-                        >
-                            <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                            </svg>
-                            TheTVDB
-                        </button>
-
                         @foreach($warezLinks as $link)
                             <button
                                     @click="activeTab = 'link-{{ $link->id }}'"
@@ -65,27 +54,6 @@
 
                     {{-- Tab Content --}}
                     <div class="warez-tabs-content">
-                        @php
-                            $theTvDbUrl = "https://thetvdb.com/series/" . ($record->data?->slug ?? $record->name);
-                        @endphp
-                        {{-- TheTVDB Tab --}}
-                        <div x-show="activeTab === 'tvdb'" class="warez-tab-panel">
-                            <div class="iframe-info">
-                                <svg class="info-icon" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-                                </svg>
-                                <span>TheTVDB</span>
-                                <a href="{{ $theTvDbUrl }}" class="iframe-url"
-                                   target="_blank">
-                                    {{ $theTvDbUrl }}
-                                </a>
-                            </div>
-                            <iframe
-                                    src="{{ $theTvDbUrl }}"
-                                    class="warez-iframe"
-                            ></iframe>
-                        </div>
-
                         {{-- Warez Links Tabs --}}
                         @foreach($warezLinks as $link)
                             <div x-show="activeTab === 'link-{{ $link->id }}'" class="warez-tab-panel">
@@ -94,8 +62,7 @@
                                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
                                     </svg>
                                     <span>{{ $link->title }}</span>
-                                    <a href="{{ $link->getIframeUrl($record) }}" class="iframe-url"
-                                       target="_blank">
+                                    <a href="{{ $link->getIframeUrl($record) }}" class="iframe-url" target="_blank">
                                         {{ $link->getIframeUrl($record) }}
                                     </a>
                                 </div>

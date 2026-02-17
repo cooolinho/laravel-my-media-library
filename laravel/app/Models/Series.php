@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @property int $id
@@ -24,15 +25,15 @@ class Series extends Model
     /** @use HasFactory<SeriesFactory> */
     use HasFactory;
 
-    const id = 'id';
-    const name = 'name';
-    const theTvDbId = 'theTvDbId';
+    const string id = 'id';
+    const string name = 'name';
+    const string theTvDbId = 'theTvDbId';
 
     // relations
-    const has_many_episodes = 'episodes';
-    const has_many_artworks = 'artworks';
-    const has_one_data = 'data';
-    const has_many_job_logs = 'jobLogs';
+    const string has_many_episodes = 'episodes';
+    const string has_many_artworks = 'artworks';
+    const string has_one_data = 'data';
+    const string has_many_job_logs = 'jobLogs';
 
     public $timestamps = false;
 

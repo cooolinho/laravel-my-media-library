@@ -15,13 +15,15 @@ use Illuminate\Database\Eloquent\Model;
  */
 class WarezLink extends Model
 {
-    const id = 'id';
-    const title = 'title';
-    const url = 'url';
-    const placeholderType = 'placeholder_type';
+    const string id = 'id';
+    const string title = 'title';
+    const string url = 'url';
+    const string placeholderType = 'placeholder_type';
 
-    const PLACEHOLDER_SERIES_NAME = 'series_name';
-    const PLACEHOLDER_TVDB_ID = 'tvdb_id';
+    const string PLACEHOLDER = '<PLACEHOLDER>';
+    const string PLACEHOLDER_SERIES_NAME = 'series_name';
+    const string PLACEHOLDER_TVDB_ID = 'tvdb_id';
+    const string PLACEHOLDER_SERIES_SLUG = 'series_slug';
 
     protected $fillable = [
         self::title,
@@ -32,25 +34,22 @@ class WarezLink extends Model
     public function getIframeUrl(Series $series): string
     {
         $url = $this->url;
+        $placeholderType = $this->toArray()[self::placeholderType];
 
-        switch ($this->placeholderType) {
-            case self::PLACEHOLDER_TVDB_ID:
-                $url = str_replace('<TVDB_ID>', $series->theTvDbId, $url);
-                break;
-            case self::PLACEHOLDER_SERIES_NAME:
-            default:
-                $url = str_replace('<SERIES_NAME>', urlencode($series->name), $url);
-                break;
-        }
-
-        return $url;
+        return match ($placeholderType) {
+            self::PLACEHOLDER_TVDB_ID => str_replace(self::PLACEHOLDER, $series->theTvDbId, $url),
+            self::PLACEHOLDER_SERIES_SLUG => str_replace(self::PLACEHOLDER, $series->data?->slug ?? '', $url),
+            self::PLACEHOLDER_SERIES_NAME => str_replace(self::PLACEHOLDER, urlencode($series->name), $url),
+            default => $url,
+        };
     }
 
     public static function getPlaceholderTypes(): array
     {
         return [
-            self::PLACEHOLDER_SERIES_NAME => 'Seriename (<SERIES_NAME>)',
-            self::PLACEHOLDER_TVDB_ID => 'TheTVDB ID (<TVDB_ID>)',
+            self::PLACEHOLDER_SERIES_NAME => 'Serien-Name (2 Broke Girls)',
+            self::PLACEHOLDER_SERIES_SLUG => 'Serien-Slug (2-broke-girls)',
+            self::PLACEHOLDER_TVDB_ID => 'TheTVDB ID (248741)',
         ];
     }
 }

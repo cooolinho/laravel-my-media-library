@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @property int $id
@@ -26,18 +27,18 @@ class Episode extends Model
     /** @use HasFactory<EpisodeFactory> */
     use HasFactory;
 
-    const id = 'id';
-    const number = 'number';
-    const seasonNumber = 'seasonNumber';
-    const owned = 'owned';
-    const theTvDbId = 'theTvDbId';
-    const notes = 'notes';
+    const string id = 'id';
+    const string number = 'number';
+    const string seasonNumber = 'seasonNumber';
+    const string owned = 'owned';
+    const string theTvDbId = 'theTvDbId';
+    const string notes = 'notes';
 
     // relations
-    const series_id = 'series_id';
-    const belongs_to_series = 'series';
-    const has_one_data = 'data';
-    const has_many_job_logs = 'jobLogs';
+    const string series_id = 'series_id';
+    const string belongs_to_series = 'series';
+    const string has_one_data = 'data';
+    const string has_many_job_logs = 'jobLogs';
 
     public $timestamps = false;
 

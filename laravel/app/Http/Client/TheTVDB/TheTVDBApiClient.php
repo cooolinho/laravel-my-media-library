@@ -2,7 +2,6 @@
 
 namespace App\Http\Client\TheTVDB;
 
-use App\Services\TheTVDBApiLogger;
 use App\Settings\TheTVDBSettings;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -10,13 +9,14 @@ use Illuminate\Support\Facades\Log;
 
 class TheTVDBApiClient
 {
-    const CACHE_KEY_TVDB_BEARER_TOKEN = 'tvdb_bearer_token';
+    const string CACHE_KEY_TVDB_BEARER_TOKEN = 'tvdb_bearer_token';
     protected string $apiUrl;
     private string $apiKey;
     private string $pin;
     private int $tokenExpiration;
     private int $retries = 0;
     private int $maxRetries;
+    private int $apiCacheDuration;
     public array $languages;
     public array $translationsKeysIgnore = [
         'language',
@@ -36,6 +36,7 @@ class TheTVDBApiClient
         $settings = new TheTVDBSettings();
         $this->languages = $settings->languages;
         $this->languageDefault = $settings->languageDefault;
+        $this->apiCacheDuration = $settings->apiCacheDuration;
     }
 
     /**
@@ -43,61 +44,45 @@ class TheTVDBApiClient
      */
     public function login(): bool
     {
-        $startTime = microtime(true);
-        $endpoint = 'login';
-        $params = [
-            'apikey' => $this->apiKey,
-            'pin' => $this->pin,
-        ];
+        $request = new TheTVDBRequest(
+            endpoint: 'login',
+            method: 'POST',
+            params: [
+                'apikey' => $this->apiKey,
+                'pin' => $this->pin,
+            ]
+        );
 
         try {
-            $response = Http::post($this->apiUrl . $endpoint, $params);
-            $responseTime = (int)((microtime(true) - $startTime) * 1000);
+            $response = Http::post($this->apiUrl . $request->getEndpoint(), $request->getParams());
 
             if ($response->successful()) {
                 $bearerToken = $response->json('data.token');
                 Cache::put(self::CACHE_KEY_TVDB_BEARER_TOKEN, $bearerToken, now()->addMinutes($this->tokenExpiration));
 
                 // Log successful login
-                TheTVDBApiLogger::log(
-                    endpoint: $endpoint,
-                    method: 'POST',
-                    params: $params,
-                    statusCode: $response->status(),
-                    responseData: $response->json(),
-                    responseTime: $responseTime,
-                    success: true,
-                    bearerToken: $bearerToken
-                );
+                $request
+                    ->setStatusCode($response->status())
+                    ->setResponseData($response->json())
+                    ->setBearerToken($bearerToken)
+                    ->logSuccess();
 
                 return true;
             }
 
             // Log failed login
-            TheTVDBApiLogger::log(
-                endpoint: $endpoint,
-                method: 'POST',
-                params: $params,
-                statusCode: $response->status(),
-                responseData: $response->json(),
-                errorMessage: 'Login failed: ' . $response->body(),
-                responseTime: $responseTime,
-                success: false
-            );
+            $request
+                ->setStatusCode($response->status())
+                ->setResponseData($response->json())
+                ->setErrorMessage('Login failed: ' . $response->body())
+                ->logError();
         } catch (\Throwable $e) {
-            $responseTime = (int)((microtime(true) - $startTime) * 1000);
-
             Log::error($e->getMessage());
 
             // Log exception
-            TheTVDBApiLogger::log(
-                endpoint: $endpoint,
-                method: 'POST',
-                params: $params,
-                errorMessage: $e->getMessage(),
-                responseTime: $responseTime,
-                success: false
-            );
+            $request
+                ->setErrorMessage($e->getMessage())
+                ->logError();
         }
 
         return false;
@@ -111,8 +96,32 @@ class TheTVDBApiClient
      */
     public function request(string $endpoint, array $params = [], string $method = 'GET'): TheTVDBApiResponse
     {
-        $startTime = microtime(true);
         $bearerToken = Cache::get(self::CACHE_KEY_TVDB_BEARER_TOKEN);
+
+        $request = new TheTVDBRequest(
+            endpoint: $endpoint,
+            method: $method,
+            params: $params,
+            bearerToken: $bearerToken
+        );
+
+        // Cache-Key generieren aus Endpoint, Params und Method
+        $cacheKey = $request->generateCacheKey();
+
+        // Wenn Cache aktiviert ist (apiCacheDuration > 0), prüfe Cache
+        if ($this->apiCacheDuration > 0) {
+            $cachedResponse = Cache::get($cacheKey);
+
+            if ($cachedResponse !== null) {
+                // Log Cache-Hit
+                $request
+                    ->setResponseData($cachedResponse)
+                    ->markAsFromCache()
+                    ->logSuccess();
+
+                return new TheTVDBApiResponse($cachedResponse);
+            }
+        }
 
         try {
             if (!$bearerToken) {
@@ -120,14 +129,9 @@ class TheTVDBApiClient
                     $errorMessage = 'Max retries reached. Not authenticated.';
 
                     // Log failed request (no authentication)
-                    TheTVDBApiLogger::log(
-                        endpoint: $endpoint,
-                        method: $method,
-                        params: $params,
-                        errorMessage: $errorMessage,
-                        responseTime: (int)((microtime(true) - $startTime) * 1000),
-                        success: false
-                    );
+                    $request
+                        ->setErrorMessage($errorMessage)
+                        ->logError();
 
                     throw new \Exception($errorMessage);
                 }
@@ -139,51 +143,37 @@ class TheTVDBApiClient
             }
 
             $response = Http::withToken($bearerToken)->$method($this->apiUrl . $endpoint, $params);
-            $responseTime = (int)((microtime(true) - $startTime) * 1000);
 
             if ($response->successful()) {
-                // Log successful request
-                TheTVDBApiLogger::log(
-                    endpoint: $endpoint,
-                    method: $method,
-                    params: $params,
-                    statusCode: $response->status(),
-                    responseData: $response->json(),
-                    responseTime: $responseTime,
-                    success: true,
-                    bearerToken: $bearerToken
-                );
+                $responseData = $response->json();
 
-                return new TheTVDBApiResponse($response->json());
+                // Speichere Response im Cache, wenn Cache aktiviert ist
+                if ($this->apiCacheDuration > 0) {
+                    Cache::put($cacheKey, $responseData, now()->addMinutes($this->apiCacheDuration));
+                }
+
+                // Log successful request
+                $request
+                    ->setStatusCode($response->status())
+                    ->setResponseData($responseData)
+                    ->logSuccess();
+
+                return new TheTVDBApiResponse($responseData);
             }
 
             // Log failed request
-            TheTVDBApiLogger::log(
-                endpoint: $endpoint,
-                method: $method,
-                params: $params,
-                statusCode: $response->status(),
-                responseData: $response->json(),
-                errorMessage: 'Request failed: ' . $response->body(),
-                responseTime: $responseTime,
-                success: false,
-                bearerToken: $bearerToken
-            );
+            $request
+                ->setStatusCode($response->status())
+                ->setResponseData($response->json())
+                ->setErrorMessage('Request failed: ' . $response->body())
+                ->logError();
         } catch (\Throwable $e) {
-            $responseTime = (int)((microtime(true) - $startTime) * 1000);
-
             Log::error($e->getMessage());
 
             // Log exception
-            TheTVDBApiLogger::log(
-                endpoint: $endpoint,
-                method: $method,
-                params: $params,
-                errorMessage: $e->getMessage(),
-                responseTime: $responseTime,
-                success: false,
-                bearerToken: $bearerToken
-            );
+            $request
+                ->setErrorMessage($e->getMessage())
+                ->logError();
         }
 
         return new TheTVDBApiResponse();

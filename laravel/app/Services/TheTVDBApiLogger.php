@@ -64,6 +64,112 @@ class TheTVDBApiLogger
     }
 
     /**
+     * Logge einen erfolgreichen API-Request
+     *
+     * @param string $endpoint
+     * @param string $method
+     * @param array $params
+     * @param int $statusCode
+     * @param array|null $responseData
+     * @param int|null $responseTime
+     * @param string|null $bearerToken
+     * @return TheTVDBApiLog|null
+     */
+    public static function success(
+        string  $endpoint,
+        string  $method = 'GET',
+        array   $params = [],
+        int     $statusCode = 200,
+        ?array  $responseData = null,
+        ?int    $responseTime = null,
+        ?string $bearerToken = null
+    ): ?TheTVDBApiLog
+    {
+        return self::log(
+            endpoint: $endpoint,
+            method: $method,
+            params: $params,
+            statusCode: $statusCode,
+            responseData: $responseData,
+            responseTime: $responseTime,
+            success: true,
+            fromCache: false,
+            bearerToken: $bearerToken
+        );
+    }
+
+    /**
+     * Logge einen fehlgeschlagenen API-Request
+     *
+     * @param string $endpoint
+     * @param string $method
+     * @param array $params
+     * @param string $errorMessage
+     * @param int|null $statusCode
+     * @param array|null $responseData
+     * @param int|null $responseTime
+     * @param string|null $bearerToken
+     * @return TheTVDBApiLog|null
+     */
+    public static function error(
+        string  $endpoint,
+        string  $method = 'GET',
+        array   $params = [],
+        string  $errorMessage = '',
+        ?int    $statusCode = null,
+        ?array  $responseData = null,
+        ?int    $responseTime = null,
+        ?string $bearerToken = null
+    ): ?TheTVDBApiLog
+    {
+        return self::log(
+            endpoint: $endpoint,
+            method: $method,
+            params: $params,
+            statusCode: $statusCode,
+            responseData: $responseData,
+            errorMessage: $errorMessage,
+            responseTime: $responseTime,
+            success: false,
+            fromCache: false,
+            bearerToken: $bearerToken
+        );
+    }
+
+    /**
+     * Logge einen gecachten API-Request
+     *
+     * @param string $endpoint
+     * @param string $method
+     * @param array $params
+     * @param array|null $responseData
+     * @param int|null $responseTime
+     * @param string|null $bearerToken
+     * @return TheTVDBApiLog|null
+     */
+    public static function cache(
+        string  $endpoint,
+        string  $method = 'GET',
+        array   $params = [],
+        ?array  $responseData = null,
+        ?int    $responseTime = null,
+        ?string $bearerToken = null
+    ): ?TheTVDBApiLog
+    {
+        return self::log(
+            endpoint: $endpoint,
+            method: $method,
+            params: $params,
+            statusCode: 200,
+            responseData: $responseData,
+            responseTime: $responseTime,
+            success: true,
+            fromCache: true,
+            bearerToken: $bearerToken
+        );
+    }
+
+    /**
      * Entferne sensible Daten aus den Parametern
      *
      * @param array $params
