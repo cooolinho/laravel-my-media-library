@@ -77,10 +77,11 @@ class ImportDataService
                 continue;
             }
 
-            $episodes[] = Episode::query()->updateOrCreate([
-                Episode::series_id => $series->id,
-                Episode::theTvDbId => $episode['id'],
-            ], $this->filterResponseData($episode));
+            $episodes[] = Episode::query()
+                ->updateOrCreate([
+                    Episode::series_id => $series->id,
+                    Episode::theTvDbId => $episode['id'],
+                ], $this->filterResponseData($episode));
         }
 
         return $episodes;
@@ -118,7 +119,7 @@ class ImportDataService
     public function importLanguages(): void
     {
         $data = $this->languagesApi->getAllLanguages()->getData();
-        $filteredData = array_map(function($entity) {
+        $filteredData = array_map(function ($entity) {
             // remove shortCode bc is always null
             unset($entity['shortCode']);
             return $entity;

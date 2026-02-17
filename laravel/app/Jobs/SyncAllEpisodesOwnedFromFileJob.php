@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Jobs\AbstractBaseJob as Job;
+use App\Jobs\Concerns\LogsJobActivity;
 use App\Jobs\Exceptions\JobNotActivatedException;
 use App\Models\Episode;
 use App\Models\Series;
@@ -15,8 +16,9 @@ use Illuminate\Support\Facades\File;
 class SyncAllEpisodesOwnedFromFileJob extends Job implements ShouldQueue
 {
     use Queueable;
+    use LogsJobActivity;
 
-    public const REGEX_DIRECTORY_SEASON_EPISODE = '/(###SERIES_DIRECTORY###).*?(S([0-9]{2})E([0-9]{2,3}))/';
+    public const string REGEX_DIRECTORY_SEASON_EPISODE = '/(###SERIES_DIRECTORY###).*?(S([0-9]{2})E([0-9]{2,3}))/';
 
     /**
      * @var Collection<Series>
@@ -39,13 +41,34 @@ class SyncAllEpisodesOwnedFromFileJob extends Job implements ShouldQueue
      */
     public function handle(JobSettings $settings): void
     {
-        if (!$settings->syncAllEpisodesOwnedFromFileJob_enabled) {
-            $this->fail(new JobNotActivatedException());
-            return;
-        }
+        $this->logStart(null, 'Synchronisiere alle Episoden aus Datei: ' . $this->filePath, [
+            'file_path' => $this->filePath,
+        ]);
 
-        $this->series = Series::all();
-        $this->processFile($this->filePath);
+        try {
+            if (!$settings->syncAllEpisodesOwnedFromFileJob_enabled) {
+                $this->logSkipped('Job ist nicht aktiviert');
+                $this->fail(new JobNotActivatedException());
+                return;
+            }
+
+            $this->series = Series::all();
+            $this->logUpdate(['total_series_count' => $this->series->count()]);
+
+            $this->processFile($this->filePath);
+
+            $this->logSuccess(sprintf(
+                '%d Episoden aus %d Serien als vorhanden markiert',
+                count($this->theTvDbIdsFound),
+                $this->series->count()
+            ), [
+                'episodes_marked_owned' => count($this->theTvDbIdsFound),
+                'series_processed' => $this->series->count(),
+            ]);
+        } catch (Throwable $e) {
+            $this->logFailure($e);
+            throw $e;
+        }
     }
 
 

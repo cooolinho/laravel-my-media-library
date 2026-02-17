@@ -4,8 +4,8 @@ namespace App\Filament\Resources\Jobs\Tables;
 
 use App\Models\Job;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -58,7 +58,7 @@ class JobsTable
                     }),
             ])
             ->recordActions([
-                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Http\Client\TheTVDB\Api\UpdatesApi;
+use App\Jobs\Concerns\LogsJobActivity;
 use App\Jobs\Exceptions\JobNotActivatedException;
 use App\Models\Series;
 use App\Settings\JobSettings;
@@ -10,10 +11,11 @@ use App\Settings\TheTVDBSettings;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Throwable;
 
 class UpdatesJob extends AbstractBaseJob implements ShouldQueue
 {
-    use Queueable;
+    use Queueable, LogsJobActivity;
 
     private array $mySeriesIds = [];
     private array $seriesIdsToUpdate = [];
@@ -33,25 +35,46 @@ class UpdatesJob extends AbstractBaseJob implements ShouldQueue
      */
     public function handle(UpdatesApi $api, JobSettings $jobSettings, TheTVDBSettings $theTVDBSettings): void
     {
-        if (!$jobSettings->updatesJob_enabled) {
-            $this->fail(new JobNotActivatedException());
-            return;
-        }
+        $this->logStart(null, 'Suche nach Serie-Updates', [
+            'updatesSinceXDays' => $theTVDBSettings->updatesSinceXDays,
+        ]);
 
-        $this->api = $api;
-        $this->sinceDaysTimestamp = Carbon::now()->subDays($theTVDBSettings->updatesSinceXDays)->timestamp;;
-        $this->mySeriesIds = Series::findNotEnded()
-            ->pluck(Series::theTvDbId)
-            ->toArray();
+        try {
+            if (!$jobSettings->updatesJob_enabled) {
+                $this->logSkipped('Job ist nicht aktiviert');
+                $this->fail(new JobNotActivatedException());
+                return;
+            }
 
-        if (!empty($this->mySeriesIds)) {
-            $this->checkUpdates();
-            $this->triggerSeriesDataJobs();
-        }
+            $this->api = $api;
+            $this->sinceDaysTimestamp = Carbon::now()->subDays($theTVDBSettings->updatesSinceXDays)->timestamp;
+            $this->mySeriesIds = Series::findNotEnded()
+                ->pluck(Series::theTvDbId)
+                ->toArray();
 
-        if ($theTVDBSettings->autoUpdates) {
-            self::dispatch()
-                ->delay(Carbon::now()->addDays($theTVDBSettings->updatesSinceXDays));
+            $this->logUpdate(['total_series_count' => count($this->mySeriesIds)]);
+
+            if (!empty($this->mySeriesIds)) {
+                $this->checkUpdates();
+
+                $this->logUpdate(['series_to_update_count' => count($this->seriesIdsToUpdate)]);
+
+                $this->triggerSeriesDataJobs();
+            }
+
+            if ($theTVDBSettings->autoUpdates) {
+                self::dispatch()
+                    ->delay(Carbon::now()->addDays($theTVDBSettings->updatesSinceXDays));
+            }
+
+            $this->logSuccess(sprintf(
+                '%d von %d Serien benötigen Updates',
+                count($this->seriesIdsToUpdate),
+                count($this->mySeriesIds)
+            ));
+        } catch (Throwable $e) {
+            $this->logFailure($e);
+            throw $e;
         }
     }
 

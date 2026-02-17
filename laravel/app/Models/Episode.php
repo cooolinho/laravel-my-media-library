@@ -37,6 +37,8 @@ class Episode extends Model
     const series_id = 'series_id';
     const belongs_to_series = 'series';
     const has_one_data = 'data';
+    const has_many_job_logs = 'jobLogs';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -56,6 +58,11 @@ class Episode extends Model
     public function data(): HasOne
     {
         return $this->hasOne(EpisodeData::class);
+    }
+
+    public function jobLogs(): MorphMany
+    {
+        return $this->morphMany(JobLog::class, 'loggable')->latest();
     }
 
     public function getIdentifier(): string

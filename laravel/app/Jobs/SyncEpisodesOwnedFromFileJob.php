@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Jobs\AbstractBaseJob as Job;
+use App\Jobs\Concerns\LogsJobActivity;
 use App\Jobs\Exceptions\JobNotActivatedException;
 use App\Models\Episode;
 use App\Models\Series;
@@ -16,8 +17,9 @@ use Illuminate\Support\Facades\Log;
 class SyncEpisodesOwnedFromFileJob extends Job implements ShouldQueue
 {
     use Queueable;
+    use LogsJobActivity;
 
-    public const REGEX_SEASON_EPISODE = '/S([0-9]{2})E([0-9]{2,3})/';
+    public const string REGEX_SEASON_EPISODE = '/S([0-9]{2})E([0-9]{2,3})/';
 
     /**
      * key = theTvDbId
@@ -50,13 +52,30 @@ class SyncEpisodesOwnedFromFileJob extends Job implements ShouldQueue
      */
     public function handle(JobSettings $settings): void
     {
-        if (!$settings->syncEpisodesOwnedFromFileJob_enabled) {
-            $this->fail(new JobNotActivatedException());
-            return;
-        }
+        $this->logStart($this->series, 'Synchronisiere Episoden aus Datei: ' . $this->filePath, [
+            'series_id' => $this->series->id,
+            'series_name' => $this->series->name,
+            'file_path' => $this->filePath,
+        ]);
 
-        $this->identifier = $this->series->getEpisodesIdentifier();
-        $this->processFile();
+        try {
+            if (!$settings->syncEpisodesOwnedFromFileJob_enabled) {
+                $this->logSkipped('Job ist nicht aktiviert');
+                $this->fail(new JobNotActivatedException());
+                return;
+            }
+
+            $this->identifier = $this->series->getEpisodesIdentifier();
+            $this->processFile();
+
+            $this->logSuccess(sprintf('%d Episoden als vorhanden markiert', count($this->episodesFound)), [
+                'episodes_found' => count($this->episodesFound),
+                'episodes_marked_owned' => count($this->episodesFound),
+            ]);
+        } catch (Throwable $e) {
+            $this->logFailure($e);
+            throw $e;
+        }
     }
 
     public function processFile(): void

@@ -32,6 +32,7 @@ class Series extends Model
     const has_many_episodes = 'episodes';
     const has_many_artworks = 'artworks';
     const has_one_data = 'data';
+    const has_many_job_logs = 'jobLogs';
 
     public $timestamps = false;
 
@@ -53,6 +54,11 @@ class Series extends Model
     public function data(): HasOne
     {
         return $this->hasOne(SeriesData::class);
+    }
+
+    public function jobLogs(): MorphMany
+    {
+        return $this->morphMany(JobLog::class, 'loggable')->latest();
     }
 
     public function getEpisodesIdentifier(): array

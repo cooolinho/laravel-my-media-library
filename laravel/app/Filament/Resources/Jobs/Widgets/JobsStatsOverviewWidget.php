@@ -18,13 +18,13 @@ class JobsStatsOverviewWidget extends BaseWidget
     {
         return [
             $this->getTotalStat(),
-            $this->getSeriesDataJobsStat(),
-            $this->getSeriesEpisodesJobsStat(),
-            $this->getSeriesArtworksJobs(),
-            $this->getEpisodeDataJobsStat(),
-            $this->getSyncAllEpisodesOwnedFromFileJobsStat(),
-            $this->getSyncEpisodesOwnedFromFileJobs(),
-            $this->getUpdateSeriesJobs(),
+//            $this->getSeriesDataJobsStat(),
+//            $this->getSeriesEpisodesJobsStat(),
+//            $this->getSeriesArtworksJobs(),
+//            $this->getEpisodeDataJobsStat(),
+//            $this->getSyncAllEpisodesOwnedFromFileJobsStat(),
+//            $this->getSyncEpisodesOwnedFromFileJobs(),
+//            $this->getUpdateSeriesJobs(),
         ];
     }
 

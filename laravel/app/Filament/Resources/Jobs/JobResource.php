@@ -2,10 +2,7 @@
 
 namespace App\Filament\Resources\Jobs;
 
-use App\Filament\Resources\Jobs\Pages\CreateJob;
-use App\Filament\Resources\Jobs\Pages\EditJob;
 use App\Filament\Resources\Jobs\Pages\ListJobs;
-use App\Filament\Resources\Jobs\Schemas\JobForm;
 use App\Filament\Resources\Jobs\Tables\JobsTable;
 use App\Models\Job;
 use BackedEnum;
@@ -18,10 +15,10 @@ class JobResource extends Resource
 {
     protected static ?string $model = Job::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-    protected static ?string $navigationLabel = 'Jobs';
-    protected static string|null|\UnitEnum $navigationGroup = 'Administration';
-    protected static ?int $navigationSort = 98;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedQueueList;
+    protected static ?string $navigationLabel = 'Übersicht';
+    protected static string|null|\UnitEnum $navigationGroup = 'Jobs';
+    protected static ?int $navigationSort = 50;
 
     protected static ?string $recordTitleAttribute = 'queue';
 

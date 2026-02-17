@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Jobs\AbstractBaseJob as Job;
+use App\Jobs\Concerns\LogsJobActivity;
 use App\Jobs\Exceptions\JobNotActivatedException;
 use App\Models\Episode;
 use App\Models\Job as JobModel;
@@ -11,10 +12,12 @@ use App\Settings\JobSettings;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Queue\Queueable;
+use Throwable;
 
 class EpisodeDataJob extends Job implements ShouldQueue
 {
     use Queueable;
+    use LogsJobActivity;
 
     private Episode $episode;
 
@@ -25,12 +28,27 @@ class EpisodeDataJob extends Job implements ShouldQueue
 
     public function handle(JobSettings $settings, ImportDataService $service): void
     {
-        if (!$settings->episodeDataJob_enabled) {
-            $this->fail(new JobNotActivatedException());
-            return;
-        }
+        $this->logStart($this->episode, 'Aktualisiere Episode: ' . $this->episode->getIdentifier(), [
+            'episode_id' => $this->episode->id,
+            'series_id' => $this->episode->series_id,
+            'identifier' => $this->episode->getIdentifier(),
+            'theTvDbId' => $this->episode->theTvDbId,
+        ]);
 
-        $service->importEpisodesData($this->episode);
+        try {
+            if (!$settings->episodeDataJob_enabled) {
+                $this->logSkipped('Job ist nicht aktiviert');
+                $this->fail(new JobNotActivatedException());
+                return;
+            }
+
+            $service->importEpisodesData($this->episode);
+
+            $this->logSuccess('Episode erfolgreich aktualisiert');
+        } catch (Throwable $e) {
+            $this->logFailure($e);
+            throw $e;
+        }
     }
 
     public static function findByEpisodeIds(array $ids): Collection
