@@ -7,7 +7,6 @@ use App\Filament\Resources\Episodes\Pages\EditEpisode;
 use App\Filament\Resources\Episodes\Pages\ListEpisodes;
 use App\Filament\Resources\Episodes\Pages\ViewEpisode;
 use App\Filament\Resources\Episodes\Schemas\EpisodeForm;
-use App\Filament\Resources\Episodes\Schemas\EpisodeInfolist;
 use App\Filament\Resources\Episodes\Tables\EpisodesTable;
 use App\Models\Episode;
 use BackedEnum;

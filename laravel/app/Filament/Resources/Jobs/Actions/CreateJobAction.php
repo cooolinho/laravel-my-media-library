@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Jobs\Actions;
 
-use App\Jobs\EpisodeDataJob;
 use App\Jobs\RefreshAllDataJob;
 use App\Jobs\SeriesArtworkJob;
 use App\Jobs\SeriesDataJob;
@@ -37,9 +36,6 @@ class CreateJobAction
                             SeriesArtworkJob::class => 'Lade Series Artwork',
                             SeriesEpisodesJob::class => 'Lade Series Episodes',
                         ],
-                        'Episoden' => [
-                            EpisodeDataJob::class => 'Lade Episode Data',
-                        ],
                         'Massenaktionen' => [
                             RefreshAllDataJob::class => 'Alle Serien & Episoden aktualisieren',
                         ],
@@ -73,23 +69,6 @@ class CreateJobAction
                         SyncEpisodesOwnedFromFileJob::class,
                     ])),
 
-                Select::make('episode_id')
-                    ->label('Episode')
-                    ->options(Episode::query()
-                        ->with(['series', 'data'])
-                        ->get()
-                        ->mapWithKeys(function ($episode) {
-                            $label = $episode->series->name . ' - ' . $episode->getIdentifier();
-                            if ($episode->data && $episode->data->name) {
-                                $label .= ' - ' . $episode->data->name;
-                            }
-                            return [$episode->id => $label];
-                        }))
-                    ->searchable()
-                    ->preload()
-                    ->visible(fn(callable $get) => $get('job_type') === EpisodeDataJob::class)
-                    ->required(fn(callable $get) => $get('job_type') === EpisodeDataJob::class),
-
                 TextEntry::make('info')
                     ->label('Information')
                     ->state(fn(callable $get) => match ($get('job_type')) {
@@ -110,7 +89,6 @@ class CreateJobAction
                         SeriesDataJob::class => self::handleSeriesJob($jobType, $data),
                         SeriesArtworkJob::class => self::handleSeriesJob($jobType, $data),
                         SeriesEpisodesJob::class => self::handleSeriesJob($jobType, $data),
-                        EpisodeDataJob::class => self::handleEpisodeJob($data),
                         RefreshAllDataJob::class => self::handleRefreshAllDataJob(),
                         UpdatesJob::class => self::handleUpdatesJob(),
                         default => throw new \Exception("Unbekannter Job-Typ: {$jobType}"),
@@ -149,20 +127,6 @@ class CreateJobAction
             ->title('Job wurde gestartet')
             ->success()
             ->body("Job für Serie '{$series->name}' wurde in die Queue eingereiht.")
-            ->send();
-    }
-
-    private static function handleEpisodeJob(array $data): void
-    {
-        $episode = Episode::with('series')->findOrFail($data['episode_id']);
-        EpisodeDataJob::dispatch($episode);
-
-        $episodeLabel = $episode->series->name . ' - ' . $episode->getIdentifier();
-
-        Notification::make()
-            ->title('Job wurde gestartet')
-            ->success()
-            ->body("Job für Episode '{$episodeLabel}' wurde in die Queue eingereiht.")
             ->send();
     }
 
