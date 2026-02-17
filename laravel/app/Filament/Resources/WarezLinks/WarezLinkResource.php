@@ -23,7 +23,7 @@ class WarezLinkResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
     protected static string|null|\UnitEnum $navigationGroup = 'Administration';
-    protected static ?int $navigationSort = 97;
+    protected static ?int $navigationSort = 90;
 
     public static function form(Schema $schema): Schema
     {
