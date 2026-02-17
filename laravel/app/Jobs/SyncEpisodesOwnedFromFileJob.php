@@ -88,7 +88,13 @@ class SyncEpisodesOwnedFromFileJob extends Job implements ShouldQueue
             $this->processLine($line);
         }
 
-        Log::info('Totally found: '.count($this->episodesFound));
+        Episode::query()
+            ->whereIn(Episode::theTvDbId, $this->episodesFound)
+            ->update([
+                Episode::owned => true,
+            ]);
+
+        Log::info('Totally found: ' . count($this->episodesFound));
         File::delete($this->filePath);
     }
 
@@ -97,15 +103,11 @@ class SyncEpisodesOwnedFromFileJob extends Job implements ShouldQueue
         preg_match_all(self::REGEX_SEASON_EPISODE, $line, $result);
         [$identifier] = $result;
 
-        if (!empty($identifier)) {
-            Log::info('Identifier found: '.$this->identifier[$identifier[0]]);
-            $this->episodesFound[] = $this->identifier[$identifier[0]];
+        if (empty($identifier) || !array_key_exists($identifier[0], $this->identifier)) {
+            return;
         }
 
-        Episode::query()
-            ->whereIn(Episode::theTvDbId, $this->episodesFound)
-            ->update([
-                Episode::owned => true,
-            ]);
+        Log::info('Identifier found: ' . $this->identifier[$identifier[0]]);
+        $this->episodesFound[] = $this->identifier[$identifier[0]];
     }
 }

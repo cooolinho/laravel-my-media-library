@@ -6,6 +6,7 @@ use App\Filament\Resources\Series\Actions\DownloadArtworksAsZipAction;
 use App\Filament\Resources\Series\Actions\LoadSeriesArtworksAction;
 use App\Filament\Resources\Series\Actions\LoadSeriesDataAction;
 use App\Filament\Resources\Series\Actions\LoadSeriesEpisodesDataAction;
+use App\Filament\Resources\Series\Actions\TriggerSeriesEpisodesDataJobAction;
 use App\Filament\Resources\Series\Actions\UploadFileAction;
 use App\Filament\Resources\Series\SeriesResource;
 use App\Models\Artwork;
@@ -50,6 +51,7 @@ class ViewSeries extends ViewRecord
                 LoadSeriesDataAction::make(),
                 LoadSeriesEpisodesDataAction::make(),
                 LoadSeriesArtworksAction::make(),
+                TriggerSeriesEpisodesDataJobAction::make(),
             ])
                 ->button()
                 ->label('Aktionen')

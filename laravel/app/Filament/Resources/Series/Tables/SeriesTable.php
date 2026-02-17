@@ -29,6 +29,7 @@ class SeriesTable
                 Series::has_many_episodes,
                 Series::has_one_data
             ]))
+            ->defaultSort(Series::name, 'ASC')
             ->columns([
                 TextColumn::make(Series::name)
                     ->searchable()
