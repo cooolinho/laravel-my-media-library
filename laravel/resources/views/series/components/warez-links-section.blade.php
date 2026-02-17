@@ -1,6 +1,6 @@
 {{-- Warez Links Section --}}
 @php
-    $warezLinks = \App\Models\WarezLink::all();
+    $warezLinks = \App\Models\WarezLink::active()->get();
 @endphp
 
 @if($warezLinks->count() > 0)

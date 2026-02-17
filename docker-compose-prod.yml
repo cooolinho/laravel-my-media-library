@@ -20,14 +20,11 @@ services:
             IGNITION_LOCAL_SITES_PATH: "${PWD}"
         volumes:
             - './laravel:/var/www/html'
-            - 'laravel-vendor:/var/www/html/vendor'
-            - 'laravel-logs:/var/www/html/storage/logs'
         networks:
             - laravel_sail
         depends_on:
             - mysql
             - redis
-            - mailpit
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
@@ -66,13 +63,6 @@ services:
                 - ping
             retries: 3
             timeout: 5s
-    mailpit:
-        image: 'axllent/mailpit:latest'
-        ports:
-            - '${FORWARD_MAILPIT_PORT:-1025}:1025'
-            - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
-        networks:
-            - laravel_sail
 networks:
     laravel_sail:
         driver: bridge

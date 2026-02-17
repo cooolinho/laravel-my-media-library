@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -14,13 +15,16 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property string|null $exception
  * @property string|null $loggable_type
  * @property int|null $loggable_id
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon|null $finished_at
+ * @property Carbon $created_at
+ * @property Carbon|null $finished_at
  * @property float|null $duration_seconds
  * @property Model|null $loggable
  */
 class JobLog extends Model
 {
+    // no updated_at column
+    public const null UPDATED_AT = null;
+
     const string id = 'id';
     const string job_class = 'job_class';
     const string status = 'status';

@@ -6,6 +6,7 @@ use App\Models\WarezLink;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -15,10 +16,10 @@ class WarezLinksTable
     {
         return $table
             ->columns([
-                TextColumn::make('title')
+                TextColumn::make(WarezLink::title)
                     ->label('Titel')
                     ->searchable(),
-                TextColumn::make('url')
+                TextColumn::make(WarezLink::url)
                     ->label('URL')
                     ->searchable()
                     ->limit(50),
@@ -32,12 +33,16 @@ class WarezLinksTable
                         WarezLink::PLACEHOLDER_SERIES_SLUG => 'warning',
                         default => 'gray',
                     }),
-                TextColumn::make('created_at')
+                IconColumn::make(WarezLink::active)
+                    ->label('Aktiv')
+                    ->boolean()
+                    ->sortable(),
+                TextColumn::make(WarezLink::created_at)
                     ->label('Erstellt am')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                TextColumn::make(WarezLink::updated_at)
                     ->label('Aktualisiert am')
                     ->dateTime()
                     ->sortable()

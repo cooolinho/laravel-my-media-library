@@ -18,16 +18,6 @@ class LanguageSeeder extends Seeder
             "name" => "English",
             "nativeName" => "English",
         ],
-        [
-            "id" => "spa",
-            "name" => "Spanish",
-            "nativeName" => "español",
-        ],
-        [
-            "id" => "fra",
-            "name" => "French",
-            "nativeName" => "français",
-        ],
     ];
 
 

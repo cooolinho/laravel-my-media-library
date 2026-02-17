@@ -34,9 +34,9 @@ class SeriesEpisodesJob extends Job implements ShouldQueue
 
             $this->logUpdate(['episodes_count' => count($episodes)]);
 
-            foreach ($episodes as $episode) {
-                EpisodeDataJob::dispatch($episode);
-            }
+//            foreach ($episodes as $episode) {
+//                EpisodeDataJob::dispatch($episode);
+//            }
 
             $this->logSuccess(sprintf('Erfolgreich %d Episoden importiert', count($episodes)));
         } catch (Throwable $e) {

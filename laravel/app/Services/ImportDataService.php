@@ -52,8 +52,9 @@ class ImportDataService
         // translations
         $seriesData->translations()->delete();
         foreach ($translations as $lang => $translation) {
-            $seriesData->translations()->create([
+            $seriesData->translations()->updateOrCreate([
                 SeriesTranslation::lang => $lang ?? null,
+            ], [
                 SeriesTranslation::name => $translation['name'] ?? null,
                 SeriesTranslation::overview => $translation['overview'] ?? null,
             ]);
@@ -96,15 +97,17 @@ class ImportDataService
         $data = $this->episodesApi->getEpisodeBase($episode->theTvDbId)->getData();
         $translations = $this->episodesApi->getEpisodeTranslations($episode->theTvDbId);
 
-        $episodeData = EpisodeData::query()->updateOrCreate([
-            EpisodeData::belongs_to_episode => $episode->id,
-        ], $data);
+        /** @var EpisodeData $episodeData */
+        $episodeData = EpisodeData::query()
+            ->updateOrCreate([
+                EpisodeData::belongs_to_episode => $episode->id,
+            ], $data);
 
         // translations
-        $episodeData->translations()->delete();
         foreach ($translations as $lang => $translation) {
-            $episodeData->translations()->create([
+            $episodeData->translations()->updateOrCreate([
                 EpisodeTranslation::lang => $lang ?? null,
+            ], [
                 EpisodeTranslation::name => $translation['name'] ?? null,
                 EpisodeTranslation::overview => $translation['overview'] ?? null,
             ]);
