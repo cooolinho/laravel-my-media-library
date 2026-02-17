@@ -4,10 +4,8 @@ namespace App\Jobs;
 
 use App\Jobs\AbstractBaseJob as Job;
 use App\Jobs\Concerns\LogsJobActivity;
-use App\Jobs\Exceptions\JobNotActivatedException;
 use App\Models\Episode;
 use App\Models\Series;
-use App\Settings\JobSettings;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Queue\Queueable;
@@ -39,19 +37,13 @@ class SyncAllEpisodesOwnedFromFileJob extends Job implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(JobSettings $settings): void
+    public function handle(): void
     {
         $this->logStart(null, 'Synchronisiere alle Episoden aus Datei: ' . $this->filePath, [
             'file_path' => $this->filePath,
         ]);
 
         try {
-            if (!$settings->syncAllEpisodesOwnedFromFileJob_enabled) {
-                $this->logSkipped('Job ist nicht aktiviert');
-                $this->fail(new JobNotActivatedException());
-                return;
-            }
-
             $this->series = Series::all();
             $this->logUpdate(['total_series_count' => $this->series->count()]);
 

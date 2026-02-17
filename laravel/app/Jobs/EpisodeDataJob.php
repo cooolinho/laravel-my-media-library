@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Jobs\AbstractBaseJob as Job;
 use App\Jobs\Concerns\LogsJobActivity;
-use App\Jobs\Exceptions\JobNotActivatedException;
 use App\Models\Episode;
 use App\Models\Job as JobModel;
 use App\Services\ImportDataService;
@@ -36,12 +35,6 @@ class EpisodeDataJob extends Job implements ShouldQueue
         ]);
 
         try {
-            if (!$settings->episodeDataJob_enabled) {
-                $this->logSkipped('Job ist nicht aktiviert');
-                $this->fail(new JobNotActivatedException());
-                return;
-            }
-
             $service->importEpisodesData($this->episode);
 
             $this->logSuccess('Episode erfolgreich aktualisiert');

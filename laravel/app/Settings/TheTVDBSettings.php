@@ -10,14 +10,14 @@ use Spatie\LaravelSettings\Settings;
 
 class TheTVDBSettings extends Settings implements FormSchemaInterface
 {
-    const LANGUAGE_FALLBACK = Language::ENG;
+    const string LANGUAGE_FALLBACK = Language::ENG;
 
     public array $languages = [self::LANGUAGE_FALLBACK];
     public string $languageDefault = self::LANGUAGE_FALLBACK;
     public int $updatesSinceXDays = 1;
     public bool $autoUpdates = true;
 
-    const autoUpdates = 'autoUpdates';
+    const string autoUpdates = 'autoUpdates';
 
     /**
      * @return string
@@ -38,15 +38,19 @@ class TheTVDBSettings extends Settings implements FormSchemaInterface
             Select::make('languages')
                 ->options($options)
                 ->multiple()
-                ->label('Languages'),
+                ->label('Sprachen in DB laden')
+                ->helperText('Beim Laden von Serien oder Episoden Daten werden diese Translations in der Datenbank gespeichert.'),
             Select::make('languageDefault')
                 ->options($options)
-                ->label('languageDefault'),
+                ->label('Angezeigte Sprache')
+                ->helperText('Beim Anzeigen von Serien oder Episoden Daten wird diese Sprache bevorzugt angezeigt. Wenn die Daten in dieser Sprache nicht verfügbar sind, wird auf die anderen ausgewählten Sprachen zurückgegriffen.'),
             Select::make('updatesSinceXDays')
                 ->options(array_combine($days, $days))
-                ->label('updatesSinceXDays'),
+                ->helperText('Gibt an, wie viele Tage zurück die Suche nach Updates für Serien- und Episodendaten gehen soll. Der availableAt Zeitpunkt beim Job UpdatesJob wird entsprechend angepasst, um nur Updates zu berücksichtigen, die seit diesem Zeitpunkt verfügbar sind.')
+                ->label('Updates für die letzten X Tage suchen'),
             Toggle::make(self::autoUpdates)
-                ->label('autoUpdates'),
+                ->helperText('Wenn aktiviert wird der UpdatesJob automatisch nach beendeter Ausführung erneut gestartet, um kontinuierlich nach Updates zu suchen.')
+                ->label('Automatische Updates'),
         ];
     }
 

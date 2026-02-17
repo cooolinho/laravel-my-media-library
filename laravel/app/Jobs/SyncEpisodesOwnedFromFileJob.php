@@ -4,15 +4,14 @@ namespace App\Jobs;
 
 use App\Jobs\AbstractBaseJob as Job;
 use App\Jobs\Concerns\LogsJobActivity;
-use App\Jobs\Exceptions\JobNotActivatedException;
 use App\Models\Episode;
 use App\Models\Series;
-use App\Settings\JobSettings;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class SyncEpisodesOwnedFromFileJob extends Job implements ShouldQueue
 {
@@ -50,7 +49,7 @@ class SyncEpisodesOwnedFromFileJob extends Job implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(JobSettings $settings): void
+    public function handle(): void
     {
         $this->logStart($this->series, 'Synchronisiere Episoden aus Datei: ' . $this->filePath, [
             'series_id' => $this->series->id,
@@ -59,12 +58,6 @@ class SyncEpisodesOwnedFromFileJob extends Job implements ShouldQueue
         ]);
 
         try {
-            if (!$settings->syncEpisodesOwnedFromFileJob_enabled) {
-                $this->logSkipped('Job ist nicht aktiviert');
-                $this->fail(new JobNotActivatedException());
-                return;
-            }
-
             $this->identifier = $this->series->getEpisodesIdentifier();
             $this->processFile();
 

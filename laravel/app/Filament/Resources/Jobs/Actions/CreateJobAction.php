@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Jobs\Actions;
 
 use App\Jobs\EpisodeDataJob;
+use App\Jobs\RefreshAllDataJob;
 use App\Jobs\SeriesArtworkJob;
 use App\Jobs\SeriesDataJob;
 use App\Jobs\SeriesEpisodesJob;
@@ -38,6 +39,9 @@ class CreateJobAction
                         ],
                         'Episoden' => [
                             EpisodeDataJob::class => 'Lade Episode Data',
+                        ],
+                        'Massenaktionen' => [
+                            RefreshAllDataJob::class => 'Alle Serien & Episoden aktualisieren',
                         ],
                         'Sonstige Jobs' => [
                             UpdatesJob::class => 'Automatische Updates',
@@ -88,8 +92,15 @@ class CreateJobAction
 
                 TextEntry::make('info')
                     ->label('Information')
-                    ->state('Dieser Job benötigt keine zusätzlichen Parameter.')
-                    ->visible(fn(callable $get) => $get('job_type') === UpdatesJob::class),
+                    ->state(fn(callable $get) => match ($get('job_type')) {
+                        UpdatesJob::class => 'Dieser Job benötigt keine zusätzlichen Parameter.',
+                        RefreshAllDataJob::class => 'Dieser Job startet DataJobs für ALLE Serien und ALLE Episoden. Dies kann sehr lange dauern!',
+                        default => '',
+                    })
+                    ->visible(fn(callable $get) => in_array($get('job_type'), [
+                        UpdatesJob::class,
+                        RefreshAllDataJob::class,
+                    ])),
             ])
             ->action(function (array $data) {
                 $jobType = $data['job_type'];
@@ -100,6 +111,7 @@ class CreateJobAction
                         SeriesArtworkJob::class => self::handleSeriesJob($jobType, $data),
                         SeriesEpisodesJob::class => self::handleSeriesJob($jobType, $data),
                         EpisodeDataJob::class => self::handleEpisodeJob($data),
+                        RefreshAllDataJob::class => self::handleRefreshAllDataJob(),
                         UpdatesJob::class => self::handleUpdatesJob(),
                         default => throw new \Exception("Unbekannter Job-Typ: {$jobType}"),
                     };
@@ -162,6 +174,20 @@ class CreateJobAction
             ->title('Job wurde gestartet')
             ->success()
             ->body("Updates Job wurde in die Queue eingereiht.")
+            ->send();
+    }
+
+    private static function handleRefreshAllDataJob(): void
+    {
+        RefreshAllDataJob::dispatch();
+
+        $seriesCount = Series::query()->count();
+        $episodesCount = Episode::query()->count();
+
+        Notification::make()
+            ->title('Job wurde gestartet')
+            ->success()
+            ->body("Refresh All Data Job wurde gestartet. Es werden {$seriesCount} Serien und {$episodesCount} Episoden aktualisiert.")
             ->send();
     }
 }
