@@ -40,7 +40,8 @@ class SyncEpisodesOwnedFromFileJob extends Job implements ShouldQueue
      */
     public function __construct(
         private readonly Series $series,
-        private readonly string $filePath
+        private readonly string  $filePath,
+        private readonly ?string $regexPattern = null
     )
     {
         //
@@ -100,7 +101,8 @@ class SyncEpisodesOwnedFromFileJob extends Job implements ShouldQueue
 
     public function processLine($line): void
     {
-        preg_match_all(self::REGEX_SEASON_EPISODE, $line, $result);
+        $pattern = $this->regexPattern ?? self::REGEX_SEASON_EPISODE;
+        preg_match_all($pattern, $line, $result);
         [$identifier] = $result;
 
         if (empty($identifier) || !array_key_exists($identifier[0], $this->identifier)) {

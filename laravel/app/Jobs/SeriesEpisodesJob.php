@@ -30,8 +30,8 @@ class SeriesEpisodesJob extends Job implements ShouldQueue
         ]);
 
         try {
-            $episodes = $service->importSeriesEpisodes($this->series);
-            $this->logSuccess(sprintf('Erfolgreich %d Episoden importiert', count($episodes)));
+            $count = $service->importSeriesEpisodes($this->series);
+            $this->logSuccess(sprintf('Erfolgreich %d Episoden importiert', $count));
         } catch (Throwable $e) {
             $this->logFailure($e);
             throw $e;

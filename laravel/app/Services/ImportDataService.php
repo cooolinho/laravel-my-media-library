@@ -69,24 +69,32 @@ class ImportDataService
     /**
      * @param Series $series
      * @param bool $ignoreSpecials
-     * @return array<Episode>
+     * @return int
      */
-    public function importSeriesEpisodes(Series $series, bool $ignoreSpecials = true): array
+    public function importSeriesEpisodes(Series $series, bool $ignoreSpecials = true): int
     {
-        $data = $this->seriesApi->getSeriesEpisodes($series->theTvDbId)->getData()['episodes'] ?? [];
+        $episodes = 0;
+        $page = 0;
 
-        $episodes = [];
-        foreach ($data as $episode) {
-            if ($ignoreSpecials && $episode[Episode::seasonNumber] <= 0) {
-                continue;
+        do {
+            $result = $this->seriesApi->getSeriesEpisodes($series->theTvDbId, 'default', $page);
+            $data = $result->getData()['episodes'] ?? [];
+
+            foreach ($data as $episode) {
+                if ($ignoreSpecials && $episode[Episode::seasonNumber] <= 0) {
+                    continue;
+                }
+
+                Episode::query()
+                    ->updateOrCreate([
+                        Episode::series_id => $series->id,
+                        Episode::theTvDbId => $episode['id'],
+                    ], $this->filterResponseData($episode));
+                $episodes++;
             }
 
-            $episodes[] = Episode::query()
-                ->updateOrCreate([
-                    Episode::series_id => $series->id,
-                    Episode::theTvDbId => $episode['id'],
-                ], $this->filterResponseData($episode));
-        }
+            $page++;
+        } while ($result->hasLinkNext());
 
         return $episodes;
     }
