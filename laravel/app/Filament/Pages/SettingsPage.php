@@ -58,17 +58,14 @@ class SettingsPage extends Page
 
     protected function getFormSchema(): array
     {
-        $sections = [];
-        foreach ($this->classes as $settings) {
-            if ($settings instanceof FormSchemaInterface) {
-                $sections[$settings::group()] = self::loadSettingsFormSchema($settings);
-            }
-        }
-
         $formSchemas = [];
-        foreach ($sections as $heading => $schema) {
-            $formSchemas[] = Section::make(Str::pascal($heading))
-                ->schema($schema);
+        foreach ($this->classes as $settings) {
+            if (!$settings instanceof FormSchemaInterface) {
+                continue;
+            }
+
+            $formSchemas[] = Section::make(Str::pascal($settings::group()))
+                ->schema(self::loadSettingsFormSchema($settings));
         }
 
         $formSchemas[] = Section::make('Actions')
@@ -117,16 +114,34 @@ class SettingsPage extends Page
 
     private function loadSettingsFormSchema(FormSchemaInterface $settings): array
     {
-        $fields = $settings::getFormSchema();
+        $schema = $settings::getFormSchema();
+        $prefix = sprintf('%s.%s.', self::FORM_INPUT, $settings::group());
 
-        /** @var Field $field */
-        foreach ($fields as $field) {
-            $prefix = sprintf('%s.%s.', self::FORM_INPUT, $settings::group());
-            $originalStatePath = $field->getStatePath(false);
-            $field->statePath($prefix . $originalStatePath);
+        $this->processSchemaComponents($schema, $prefix);
+
+        return $schema;
+    }
+
+    /**
+     * Rekursiv durch alle Schema-Komponenten iterieren und statePath für Fields setzen
+     */
+    private function processSchemaComponents(array $components, string $prefix): void
+    {
+        foreach ($components as $component) {
+            // Prüfen ob es ein Field ist (hat getStatePath Methode)
+            if ($component instanceof Field) {
+                $originalStatePath = $component->getStatePath(false);
+                $component->statePath($prefix . $originalStatePath);
+            }
+
+            // Rekursiv durch Child-Komponenten iterieren (für Sections, Grids, etc.)
+            if (method_exists($component, 'getDefaultChildComponents')) {
+                $childComponents = $component->getDefaultChildComponents();
+                if (!empty($childComponents)) {
+                    $this->processSchemaComponents($childComponents, $prefix);
+                }
+            }
         }
-
-        return $fields;
     }
 
     public function getHeaderActions(): array

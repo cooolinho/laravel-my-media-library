@@ -9,6 +9,7 @@ return [
     'settings' => [
         App\Settings\JobSettings::class,
         App\Settings\TheTVDBSettings::class,
+        App\Settings\DashboardSettings::class,
     ],
 
     /*

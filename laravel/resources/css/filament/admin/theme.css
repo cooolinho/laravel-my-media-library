@@ -7,6 +7,7 @@
 @import "components/_warez_links.scss";
 
 /* Pages */
+@import "pages/_dashboard.scss";
 @import "pages/_listSeries.scss";
 @import "pages/_viewSeries.scss";
 @import "pages/_viewEpisode.scss";
