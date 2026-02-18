@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property int $series_id
  * @property int $episode_data_id
  * @property string|null $notes
+ * @property Carbon|null $data_last_updated_at
  * @property Series $series
  * @property EpisodeData $data
  */
@@ -33,6 +35,7 @@ class Episode extends Model
     const string owned = 'owned';
     const string theTvDbId = 'theTvDbId';
     const string notes = 'notes';
+    const string data_last_updated_at = 'data_last_updated_at';
 
     // relations
     const string series_id = 'series_id';
@@ -49,6 +52,11 @@ class Episode extends Model
         self::theTvDbId,
         self::series_id,
         self::notes,
+        self::data_last_updated_at,
+    ];
+
+    protected $casts = [
+        self::data_last_updated_at => 'datetime',
     ];
 
     public function series(): BelongsTo
@@ -72,5 +80,41 @@ class Episode extends Model
         $episodeNumber = str_pad((string)$this->number, 2, '0', STR_PAD_LEFT);
 
         return sprintf('S%sE%s', $seasonNumber, $episodeNumber);
+    }
+
+    /**
+     * Aktualisiert den Zeitstempel für die letzte Datenaktualisierung
+     */
+    public function touchDataLastUpdatedAt(): bool
+    {
+        $this->data_last_updated_at = now();
+        return $this->save();
+    }
+
+    /**
+     * Prüft, ob die Daten aktualisiert werden müssen
+     *
+     * @param int $hours Anzahl der Stunden, nach denen die Daten als veraltet gelten
+     * @return bool True, wenn die Daten aktualisiert werden müssen
+     */
+    public function needsDataUpdate(int $hours = 24): bool
+    {
+        if ($this->data_last_updated_at === null) {
+            return true;
+        }
+
+        return $this->data_last_updated_at->addHours($hours)->isPast();
+    }
+
+    /**
+     * Gibt zurück, wie alt die Daten sind (in Stunden)
+     */
+    public function getDataAgeInHours(): ?float
+    {
+        if ($this->data_last_updated_at === null) {
+            return null;
+        }
+
+        return $this->data_last_updated_at->diffInHours(now(), true);
     }
 }

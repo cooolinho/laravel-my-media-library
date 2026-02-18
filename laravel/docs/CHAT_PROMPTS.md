@@ -10,3 +10,13 @@ Kachelansicht. In dieser Kachelansicht soll das Seriencover angezeigt werden, so
 Die Kachelansicht soll weiterhin die Möglichkeit haben haben die Serien zu filtern, zu sortieren und zu suchen.
 Passe mir dazu meine ListSeriePage an, damit ich die Serien in einer Kachelansicht angezeigt bekomme. erstelle mir dazu
 die notwendigen Komponenten, damit ich die Kachelansicht mit den Seriencovern und Titeln angezeigt bekomme.
+--
+Ich lade zusätzliche Daten für Serien und Episoden von einer externen API. Diese Daten werden in der Datenbank
+gespeichert, damit sie schnell verfügbar sind.
+Ich brauche einen Zeitstempel an jeder Serie und Epsiode, damit ich weiß, wann die Daten zuletzt aktualisiert wurden. So
+kann ich entscheiden, ob ich die Daten erneut von der API laden muss oder ob die vorhandenen Daten noch aktuell sind.
+Passe mir dazu meine Serien und Episoden Tabellen an, damit sie einen Zeitstempel für dien letzten Aktualisierung der
+Daten haben. Erstelle mir dazu die notwendigen Migrationen, damit ich die Zeitstempel in der Datenbank gespeichert
+werden können. Passe mir auch die entsprechenden Modelle an, damit die Zeitstempel in den Modellen verfügbar sind.
+Erstelle mir auch die notwendigen Funktionen, damit ich die Zeitstempel aktualisieren kann, wenn ich die Daten von der
+API lade.

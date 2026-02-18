@@ -31,7 +31,6 @@ class SeriesDataJob extends Job implements ShouldQueue
 
         try {
             $service->importSeriesData($this->series);
-
             $this->logSuccess('Serie erfolgreich aktualisiert');
         } catch (Throwable $e) {
             $this->logFailure($e);

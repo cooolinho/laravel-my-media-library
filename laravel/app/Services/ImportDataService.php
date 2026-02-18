@@ -45,9 +45,10 @@ class ImportDataService
         ]);
 
         /** @var SeriesData $seriesData */
-        $seriesData = SeriesData::query()->updateOrCreate([
-            SeriesData::series_id => $series->id,
-        ], $this->filterResponseData($rawData));
+        $seriesData = SeriesData::query()
+            ->updateOrCreate([
+                SeriesData::series_id => $series->id,
+            ], $this->filterResponseData($rawData));
 
         // translations
         $seriesData->translations()->delete();
@@ -59,6 +60,8 @@ class ImportDataService
                 SeriesTranslation::overview => $translation['overview'] ?? null,
             ]);
         }
+
+        $series->touchDataLastUpdatedAt();
 
         return $seriesData;
     }
@@ -105,13 +108,16 @@ class ImportDataService
 
         // translations
         foreach ($translations as $lang => $translation) {
-            $episodeData->translations()->updateOrCreate([
-                EpisodeTranslation::lang => $lang ?? null,
-            ], [
-                EpisodeTranslation::name => $translation['name'] ?? null,
-                EpisodeTranslation::overview => $translation['overview'] ?? null,
-            ]);
+            $episodeData->translations()
+                ->updateOrCreate([
+                    EpisodeTranslation::lang => $lang ?? null,
+                ], [
+                    EpisodeTranslation::name => $translation['name'] ?? null,
+                    EpisodeTranslation::overview => $translation['overview'] ?? null,
+                ]);
         }
+
+        $episode->touchDataLastUpdatedAt();
 
         return $episodeData;
     }
@@ -153,7 +159,10 @@ class ImportDataService
             return;
         }
 
-        Artwork::query()->upsert($artworks, Artwork::theTvDbId);
+        Artwork::query()
+            ->upsert($artworks, Artwork::theTvDbId);
+
+        $series->touchDataLastUpdatedAt();
     }
 
     /**

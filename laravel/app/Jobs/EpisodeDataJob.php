@@ -35,7 +35,6 @@ class EpisodeDataJob extends Job implements ShouldQueue
 
         try {
             $service->importEpisodesData($this->episode);
-
             $this->logSuccess('Episode erfolgreich aktualisiert');
         } catch (Throwable $e) {
             $this->logFailure($e);

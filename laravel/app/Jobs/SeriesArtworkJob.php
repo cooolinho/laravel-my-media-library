@@ -30,7 +30,6 @@ class SeriesArtworkJob extends AbstractBaseJob implements ShouldQueue
 
         try {
             $service->importSeriesArtworks($this->series);
-
             $this->logSuccess('Artworks erfolgreich importiert');
         } catch (Throwable $e) {
             $this->logFailure($e);

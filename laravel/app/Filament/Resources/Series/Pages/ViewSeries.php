@@ -6,7 +6,7 @@ use App\Filament\Resources\Series\Actions\DownloadArtworksAsZipAction;
 use App\Filament\Resources\Series\Actions\LoadSeriesArtworksAction;
 use App\Filament\Resources\Series\Actions\LoadSeriesDataAction;
 use App\Filament\Resources\Series\Actions\LoadSeriesEpisodesDataAction;
-use App\Filament\Resources\Series\Actions\TriggerSeriesEpisodesDataJobAction;
+use App\Filament\Resources\Series\Actions\TriggerImportMissingDataJobForSeriesAction;
 use App\Filament\Resources\Series\Actions\UploadFileAction;
 use App\Filament\Resources\Series\SeriesResource;
 use App\Models\Artwork;
@@ -48,10 +48,7 @@ class ViewSeries extends ViewRecord
                         $this->redirect(SeriesResource::getUrl('view', ['record' => $this->record]));
                     }),
                 DownloadArtworksAsZipAction::make(),
-                LoadSeriesDataAction::make(),
-                LoadSeriesEpisodesDataAction::make(),
-                LoadSeriesArtworksAction::make(),
-                TriggerSeriesEpisodesDataJobAction::make(),
+                TriggerImportMissingDataJobForSeriesAction::make(),
             ])
                 ->button()
                 ->label('Aktionen')
