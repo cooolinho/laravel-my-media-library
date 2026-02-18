@@ -7,6 +7,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -16,6 +17,12 @@ class WarezLinksTable
     {
         return $table
             ->columns([
+                ImageColumn::make(WarezLink::logo)
+                    ->label('Logo')
+                    ->disk(\App\Config\FilesystemEnum::DISK_WAREZ_LOGOS->value)
+                    ->imageSize(40)
+                    ->defaultImageUrl(url('/images/placeholder.png'))
+                    ->toggleable(),
                 TextColumn::make(WarezLink::title)
                     ->label('Titel')
                     ->searchable(),

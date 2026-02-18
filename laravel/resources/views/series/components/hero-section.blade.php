@@ -59,35 +59,7 @@
                 @endif
             </div>
 
-            @if($record->data?->score)
-                <div class="series-rating">
-                    <div class="rating-circle">
-                        <svg class="rating-svg" viewBox="0 0 36 36">
-                            <path class="rating-bg"
-                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                  fill="none"
-                                  stroke="rgba(255,255,255,0.1)"
-                                  stroke-width="3"/>
-                            <path class="rating-progress"
-                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                  fill="none"
-                                  stroke="url(#rating-gradient)"
-                                  stroke-width="3"
-                                  stroke-dasharray="{{ $record->data->score }}, 100"/>
-                            <defs>
-                                <linearGradient id="rating-gradient">
-                                    <stop offset="0%" stop-color="#00ff88"/>
-                                    <stop offset="100%" stop-color="#00cc88"/>
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                        <div class="rating-text">
-                            <span class="rating-value">{{ number_format($record->data->score, 1) }}</span>
-                        </div>
-                    </div>
-                    <span class="rating-label">Bewertung</span>
-                </div>
-            @endif
+            @include('components.warez-links-section', ['series' => $record])
 
             @if($record->data?->getOverview())
                 <p class="series-overview">{{ $record->data->getOverview() }}</p>

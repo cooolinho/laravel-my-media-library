@@ -11,9 +11,6 @@
 
         {{-- Artworks Section --}}
         @include('series.components.artworks-section', ['artworksByType' => $artworksByType])
-
-        {{-- Warez Links Section --}}
-        @include('series.components.warez-links-section', ['record' => $record])
     </div>
 
     {{-- JavaScript --}}

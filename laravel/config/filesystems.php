@@ -47,6 +47,15 @@ return [
             'report' => false,
         ],
 
+        \App\Config\FilesystemEnum::DISK_WAREZ_LOGOS->value => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/warez-logos'),
+            'url' => env('APP_URL') . '/storage/warez-logos',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

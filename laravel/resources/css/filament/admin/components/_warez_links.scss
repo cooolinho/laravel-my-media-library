@@ -1,0 +1,130 @@
+.warez-link-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        color: white;
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    &__logo {
+        width: 1.5rem;
+        height: 1.5rem;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+
+    &__title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+// Container für mehrere Warez-Links
+.warez-links-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+// Section für Warez-Links
+.warez-links-section {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    border-radius: 0.75rem;
+    margin: 1.5rem 0;
+
+    &__title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        &::before {
+            content: '🔗';
+            font-size: 1.5rem;
+        }
+    }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+    .warez-links-section {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+
+        &__title {
+            color: #f9fafb;
+        }
+    }
+}
+
+// Varianten für verschiedene Farbschemata
+.warez-link-button--primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    &:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+}
+
+.warez-link-button--success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+
+    &:hover {
+        background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+    }
+}
+
+.warez-link-button--danger {
+    background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+
+    &:hover {
+        background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
+    }
+}
+
+.warez-link-button--info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+
+    &:hover {
+        background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    }
+}
+
+// Responsive Anpassungen
+@media (max-width: 640px) {
+    .warez-link-button {
+        padding: 0.625rem 1rem;
+        font-size: 0.8125rem;
+
+        &__logo {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+    }
+}
+

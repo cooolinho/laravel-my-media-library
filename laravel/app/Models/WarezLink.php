@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property int $id
  * @property string $title
+ * @property string|null $logo
  * @property string $url
  * @property string $placeholderType
  * @property bool $active
@@ -22,6 +23,7 @@ class WarezLink extends Model
 {
     const string id = 'id';
     const string title = 'title';
+    const string logo = 'logo';
     const string url = 'url';
     const string placeholderType = 'placeholder_type';
     const string active = 'active';
@@ -38,6 +40,7 @@ class WarezLink extends Model
 
     protected $fillable = [
         self::title,
+        self::logo,
         self::url,
         self::placeholderType,
         self::active,
@@ -53,6 +56,15 @@ class WarezLink extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where(self::active, true);
+    }
+
+    public function getLogoUrl(): ?string
+    {
+        if (!$this->logo) {
+            return null;
+        }
+
+        return \Illuminate\Support\Facades\Storage::disk(\App\Config\FilesystemEnum::DISK_WAREZ_LOGOS->value)->url($this->logo);
     }
 
     public function getIframeUrl(Series $series): string

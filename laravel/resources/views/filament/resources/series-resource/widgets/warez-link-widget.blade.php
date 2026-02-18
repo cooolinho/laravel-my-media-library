@@ -2,7 +2,7 @@
     use App\Models\WarezLink;
 @endphp
 
-<x-filament-widgets::widget x-data="{ activeTab: 'tab0' }">
+<x-filament-widgets::widget x-data="{ activeTab: 'tab1' }">
     <x-filament::tabs label="Content tabs">
         <x-filament::tabs.item
             alpine-active="activeTab === 'tab0'"
@@ -15,16 +15,18 @@
                 alpine-active="activeTab === 'tab{{ $key + 1 }}'"
                 x-on:click="activeTab = 'tab{{ $key + 1 }}'"
             >
-                {{ $link[WarezLink::title] }}
+                <span class="flex items-center gap-2">
+                    @if($link->getLogoUrl())
+                        <img src="{{ $link->getLogoUrl() }}" alt="{{ $link[WarezLink::title] }}"
+                             class="w-4 h-4 object-contain">
+                    @endif
+                    <span>{{ $link[WarezLink::title] }}</span>
+                </span>
             </x-filament::tabs.item>
         @endforeach
     </x-filament::tabs>
 
     <div class="p-4">
-        <div x-show="activeTab === 'tab0'" x-cloak>
-            <iframe src="https://thetvdb.com/series/{{ $series->data?->slug ?? $series->name }}"
-                    class="w-full h-[500px] border-0"></iframe>
-        </div>
         @foreach($links as $key => $link)
             <div x-show="activeTab === 'tab{{ $key + 1 }}'" x-cloak>
                 <iframe src="{{ $link->getIframeUrl($series) }}" class="w-full h-[500px] border-0"></iframe>

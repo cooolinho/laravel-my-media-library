@@ -1109,13 +1109,6 @@
         }
     }
 
-    // Warez Links Section
-    .warez-links-section {
-        padding: 0 3rem 3rem;
-        max-width: 1600px;
-        margin: 0 auto;
-    }
-
     .warez-accordion-block {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         border-radius: 16px;
@@ -1392,10 +1385,6 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             padding: 0 1rem 2rem;
             gap: 1rem;
-        }
-
-        .warez-links-section {
-            padding: 0 1rem 2rem;
         }
 
         .artworks-section {

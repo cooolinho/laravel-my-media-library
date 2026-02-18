@@ -12,19 +12,6 @@
         }
     }
 
-    function toggleWarezLinks(button) {
-        const warezBlock = button.closest('.warez-accordion-block');
-        const content = warezBlock.querySelector('.warez-accordion-content');
-
-        warezBlock.classList.toggle('open');
-
-        if (warezBlock.classList.contains('open')) {
-            content.style.maxHeight = content.scrollHeight + 'px';
-        } else {
-            content.style.maxHeight = '0';
-        }
-    }
-
     function toggleArtworks(button) {
         const artworksBlock = button.closest('.artworks-accordion-block');
         const content = artworksBlock.querySelector('.artworks-accordion-content');

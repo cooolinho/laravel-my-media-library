@@ -4,6 +4,7 @@
 @import "components/_gallery.scss";
 @import "components/_search.scss";
 @import "components/_json-display.scss";
+@import "components/_warez_links.scss";
 
 /* Pages */
 @import "pages/_listSeries.scss";
