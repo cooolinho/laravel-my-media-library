@@ -3,9 +3,7 @@
 namespace App\Filament\Resources\Series\Pages;
 
 use App\Filament\Resources\Series\Actions\DownloadArtworksAsZipAction;
-use App\Filament\Resources\Series\Actions\LoadSeriesArtworksAction;
-use App\Filament\Resources\Series\Actions\LoadSeriesDataAction;
-use App\Filament\Resources\Series\Actions\LoadSeriesEpisodesDataAction;
+use App\Filament\Resources\Series\Actions\MatchEpisodeFilesAction;
 use App\Filament\Resources\Series\Actions\TriggerImportMissingDataJobForSeriesAction;
 use App\Filament\Resources\Series\Actions\UploadFileAction;
 use App\Filament\Resources\Series\SeriesResource;
@@ -47,6 +45,7 @@ class ViewSeries extends ViewRecord
                         sleep(5); // Kurze Verzögerung, um sicherzustellen, dass der Job gestartet ist
                         $this->redirect(SeriesResource::getUrl('view', ['record' => $this->record]));
                     }),
+                MatchEpisodeFilesAction::make(),
                 DownloadArtworksAsZipAction::make(),
                 TriggerImportMissingDataJobForSeriesAction::make(),
             ])

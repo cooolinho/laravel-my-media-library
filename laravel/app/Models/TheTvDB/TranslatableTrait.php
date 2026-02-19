@@ -59,7 +59,7 @@ trait TranslatableTrait
         $translations = $this->getTranslationsAttribute();
 
         try {
-            return $translations[$locale][$property] ?? '';
+            return $translations[$locale][$property];
         } catch (Exception $e) {
             // if no translations found return empty string
             if (empty($translations)) {
